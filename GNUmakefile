@@ -1,9 +1,8 @@
-LATEXMK := bin/latexmk
-
+LTMK := bin/latexmk
 DEPS := rev.tex code/fmt.tex abstract.txt
 
 define latexmk =
-	$(LATEXMK) -silent -pdf "$1" &>/dev/null \
+	$(LTMK) -silent -pdf "$1" &>/dev/null \
 	  || (bin/parse-latex-log.py "$1.log"; exit 1)
 endef
 
@@ -42,7 +41,7 @@ spell:
 	@bin/hyphens.sh *.tex
 
 clean:
-	$(LATEXMK) -C p
+	$(LTMK) -C p
 	rm -f abstract.txt
 
 distclean: clean
