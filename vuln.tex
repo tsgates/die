@@ -1,0 +1,199 @@
+\section{Vulnerabilities in embedded interpreters}
+\label{s:vuln}
+
+\input{fig-cves}
+
+An embedded interpreter that receives code from an untrusted source must validate
+it before execution.  In addition, if input data to the bytecode is also
+untrusted, the interpreter must execute the bytecode defensively.
+This section illustrates common vulnerabilities found in embedded interpreters
+that fail to do so. \autoref{fig:vuln} summaries the
+vulnerabilities studied in this section.
+
+\subsection{Resource exhaustion}
+\label{s:vuln:loop}
+
+When an embedded interpreter runs bytecode,
+it should be able to control resource consumption.
+If the bytecode supports jumps~\cite{aml:spec,rar:vm,clamav:llvm},
+it is possible to contain backward jumps that will lead to
+infinite loops;
+the interpreter should be able to constrain such jumps.
+Similarly, if the bytecode supports subroutines,
+% or runs on a stack machine,
+the interpreter should guard against infinite recursion that will lead
+to stack overflows.
+
+%Infinite loops may happen to even in VMs that by
+%design do not allow loops.
+\autoref{fig:2213} shows a vulnerable code snippet, from the
+\inetdiag interpreter in the Linux kernel,
+as well as the corresponding patch.  The interpreter
+increases the instruction pointer by \cc{inet\_diag\_bc\_op->yes} when the
+current instruction evaluates to true.
+%
+To forbid backward jumps, the code defines ``\cc{yes}'' as an
+unsigned integer; but it forgets to validate that \cc{yes}
+is non-zero, leaving the interpreter vulnerable to infinite loops.
+
+A general way to constrain infinite loops or infinite recursion is to limit the
+number of instructions executed and the depth of nested recursion.  Every time an
+instruction is executed or the recursion depth is increased, the counter is
+incremented. The interpreter aborts the execution when the counter reaches the
+limit. However, implementing the watchdog counter is non-trivial in complex VMs,
+as we can find in CVE-2010-2286 and CVE-2011-3627. Without careful plans for
+restricting resources, it is hard to avoid DoS in embedded interpreters.
+
+%% Complex interpreter logic, however, makes managing the counter
+%% difficult. Missing one increment could expose the bytecode VM 
+%% to infinite loops as in CVE-2010-2286 and CVE-2011-3627.
+%% \XXX[yd][This paragraph does not make much point. The two sentence are
+%% not well related.]
+
+\begin{figure}
+\centering
+\input{code/inetdiag-loop}
+\coderule
+\caption{The patch that fixes CVE-2011-2213.  The vulnerability was missing
+validation of \inetdiag instructions in the Linux kernel, which results in
+infinite loop if \cc{op->yes} is zero.}
+\label{fig:2213}
+\end{figure}
+
+%stack: CVE-2011-3627 (\clamav)
+
+\subsection{Arithmetic errors}
+\label{s:vuln:arith}
+
+Embedded interpreters
+that provide arithmetic instructions are prone to arithmetic errors.
+These errors may come from
+either the incompatible formatting between bytecode and machine instructions,
+or unexpected behaviors of a host machine in arithmetic.  For example, when
+handing a signed division instruction, an interpreter
+should check that the divisor is
+non-zero, and that the quotient does not overflow (i.e., not $\cc{INT_MIN} /
+-1$); otherwise, the division might trigger machine exception probably resulting
+in program termination.
+
+Worse yet, checking for overflow condition
+turns out to be tricky and error-prone.
+\autoref{fig:clamav} shows the ClamAV interpreter attempting to
+verify division operands but actually mixing up the dividend and
+divisor, allowing a denial-of-service attack.
+Similarly, argument checks to ``fix'' the DragonFlyBSD
+bug~\#1748~\cite{dbsd:div} were incorrect, 
+enabling specially crafted BPF filters to cause a kernel panic.
+
+Bit shifting also leads to arithmetic errors.  For example, CVE-2010-5137 shows
+that a missing check of large bit shifts causes Bitcoin to crash on some
+machines when processing a transaction containing a left-shift opcode.
+
+%div by 0: \cc{http://bugs.dragonflybsd.org/issues/1748}, BPF in NetBSD and DragonFlyBSD).
+
+%sdiv INT_MIN/-1: ClamAV~\cite{clamav:sdiv}.
+
+\begin{figure}
+\centering
+\input{code/clamav-sdiv}
+\coderule
+\caption{Incorrect handling of the signed division opcode in \clamav's
+interpreter.  The correct check to avoid signed division overflow should swap
+\cc{a} and \cc{b}, i.e. \cc{(a == INT64\_MIN \&\& b == -1)}.}
+\label{fig:clamav}
+\end{figure}
+
+%shift: CVE-2010-5137 (bitcoin)
+
+\subsection{Information leak}
+\label{s:vuln:leak}
+
+When VMs provide information to the bytecode or the bytecode can access outside
+of VM scope, they can reveal information to the outside of VMs. In practice, an
+information leak often happen when a VM allocates memory without initialization
+and provides the allocated buffer to the bytecode to run. This type of
+vulnerability can be seen when a VM simulates register files or uses stacks for
+execution. Malicious bytecode can output those values and obtain sensitive
+information from the host system.
+ 
+\autoref{fig:bpf} shows the BPF interpreter in the OpenBSD kernel, which does
+not zero out the \cc{mem} array on the kernel stack. A malicious filter might
+return the value of an unused memory slot as the number of accepted bytes,
+potentially exposing kernel randomness to the user space.  A similar
+vulnerability (CVE-2012-3729) was discovered in the Linux kernel too.
+
+\begin{figure}
+\centering
+\input{code/bpf-leak}
+\coderule
+\caption{
+CVE-2012-3729:
+OpenBSD BPF filters loading from uninitialized scratch memory 
+(\cc{mem} array) could leak sensitive information from the kernel stack.
+The patch initializes it with \cc{bzero}. }
+\label{fig:bpf}
+\end{figure}
+
+\subsection{Arbitrary code execution}
+\label{s:vuln:exec}
+
+Enabling external calls breaks the isolation between the interpreter and the
+host system. This lacks of isolation often allows bytecode to execute arbitrary
+code in the host system.  This is a dangerous VM design that should be avoided,
+unless both the bytecode and inputs come from trusted sources.
+
+Linux's AML VM is able to invoke any kernel functions. Usually this is not a
+problem because the AML bytecode comes from trusted hardware. However, a kernel
+developer accidentally exposed the custom control method interface to
+unauthorized users, leading to a severe vulnerability (CVE-2010-4347).
+
+Another example is the notorious Pickle module in Python.  The
+Pickle VM defines \cc{GLOBAL} and \cc{REDUCE} opcodes that
+provide the capability for importing and running arbitrary Python
+functions. Many Python developers are unaware of this security
+flaw and use pickle to deserialize objects from untrusted sources,
+permitting remote code execution~\cite{pickle:wp}, such as in 
+CVE-2012-4406 and CVE-2011-2520.
+
+
+\subsection{Memory corruption}
+
+Many embedded interpreters are written in an unsafe language, and programming errors can
+lead to memory corruption errors. Examples include mishandling of the execution
+stack (\autoref{fig:freetype}), omitting bound checks when executing string
+operations, etc.  We do not dive further into these problems since they are the
+result of implementation errors, as opposed to design issues specific to
+embedded interpreters.
+
+\begin{figure}
+\centering
+\input{code/freetype-ovf}
+\coderule
+\caption{
+CVE-2010-1797:
+Stack-based buffer overflow in the FreeType. 
+The Type 2 Charstring VM forgets to
+validate the stack pointer after processing an operator. }
+\label{fig:freetype}
+\end{figure}
+
+
+\subsection{JIT spraying}
+
+Some embedded interpreters~\cite{mccanne:bpf,clamav:llvm} allow to
+compile their bytecode to machine instructions for better performance.
+%Although we could not find a reported vulnerability
+%directly originated from a JIT implementation,
+JITted bytecode introduces new attack vectors to the host system.
+For example, attackers
+can place a shell code to the kernel by writing a benign-looking BPF
+bytecode. When it is compiled and loaded into the kernel, attackers can trigger
+another bug to jump into the middle of the compiled code, so that the host
+machine interprets the instructions as the attackers intended. This attack
+technique is called JIT spraying and it can be used to break the hardened x86
+Linux with Supervisor Mode Execution Protection~(SMEP) that is supposed to
+prevent OS from executing user-level code
+inadvertently~\cite{mcaalister:jit}. Unlike well-aligned bytecode, instructions
+of host machines vary in size and misaligned so it is hard to avoid extra attack
+vectors when enabling JIT, without careful verification of the
+compiled machine code.

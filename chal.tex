@@ -1,0 +1,88 @@
+\section{Suggestions and open problems}
+\label{s:chal}
+
+\autoref{s:vuln} shows that it is non-trivial to design and implement
+a secure embedded interpreter.  One interesting observation is that the more
+expressive a bytecode design is, the more invariants an interpreter
+implementation must maintain, which consequently enables a wider range of
+possible attack vectors.  Here we suggest rules to follow when designing
+a secure embedded interpreter.
+
+\paragraph{Limit feature sets.} 
+A developer designing an embedded interpreter should consider the trade-off between
+flexibility and security in their design. For instance, Bitcoin chose to disable
+certain instructions~\cite{bitcoin:script} to reduce attack vectors after
+several arithmetic errors were discovered in its VM~(see
+\autoref{s:vuln:arith}). In this vein, \inetdiag, which does not support
+arithmetic operations by design, is more immune to arithmetic errors such as
+division by zero. On the other hand, implementing a Turing-complete instruction
+set requires extra care.
+
+\paragraph{Constrain resources.}
+A common approach to secure an interpreter is to sandbox it via process
+isolation, as adopted by web browsers~\cite{reis:chrome}. However, embedded interpreters
+are often designed to achieve performance, but not security in mind. It might be
+possible to adopt a process isolation in RarVM because the overheads of invoking a
+new process offset with decompressing RAR files.
+
+Particularly in enabling jumps and subroutines, VMs should also provide a way to
+monitor, and restrict the resources that bytecode is using. Whenever it violates 
+the policy, VMs should be able the detect and reclaim the allocated resources,
+instead of being vulnerable to DoS attacks.
+
+%% It is a common practice to isolate a general purpose VM in a process 
+
+%% Unlike isolating a general purpose VM via a process isolation, it is not
+%% practical to use a process isolation in bytecode VM
+
+%% bytecode VM is
+%% not 
+
+%% Particularly, the system runs a bytecode VM in a separate process,
+%% and further limits the set of system calls the process may invoke~(e.g.,
+%% via the system call filtering mechanism on Linux~\cite{seccomp-bpf}).
+%% In doing so, the VM can only interact with the core system through
+%% well-defined IPC protocols.
+%% Even if an adversary takes control of the bytecode VM,
+%% the damage is largely confined in this VM process.
+%% For example, one can sandbox a vulnerable RarVM
+%% to safely extract RAR files.
+
+%% This approach has several limitations.
+%% First, it cannot prevent semantic bugs, where a compromised VM
+%% can produce wrong results~(e.g., incorrect files decompressed from RAR).
+%% Second, it incurs performance overhead due to IPC,
+%% which makes it less appropriate for performance-critical applications
+%% such as packet filtering.
+%% Third, it is impractical to employ process isolation within OS kernels.
+
+\paragraph{Define clear interface to the host.}
+
+When bytecode need to interact with or need to process external inputs given by
+the host machine, interpreters should define a clean interface between them. For example,
+in designing a new Pickle protocol, one could define a set of safe python libraries
+to use when marshaling a Python object. Unlike Pickle, BPF bytecode has a clean
+input and output interface to a host machine; it inputs a packet, and outputs a
+bit whether the current packet is filtered or not. Therefore, VMs should define
+a clean way of interacting with the host machine.
+
+\paragraph{Test embedded interpreters.}
+
+Symbolic testing tools such as KLEE~\cite{cadar:klee} and
+SAGE~\cite{Godefroid:sage} explore code paths and construct specific input data
+to trigger bugs.  To make those tools effective in analyzing bytecode
+interpreters in practice, we need to consider how to derive safe and unsafe part
+of code and data, and how to systematically explore JITted bytecode because a few
+interpreters provide JIT compilations for performance.
+
+\if 0
+\paragraph{Build extensible interpreters.}
+Since it is error-prone to build an interpreter from scratch,
+one strategy is to construct an extensible interpreter,
+which consists of reusable components,
+similar to the Xoc extensible compiler~\cite{cox:xoc}.
+Developers can build and customize an interpreter by choosing a set of
+components, such as whether the interpreter supports integer arithemtic,
+or whether it allows loops.  Each feature set should go go through
+comprehensive tests.
+\fi

@@ -1,0 +1,40 @@
+\documentclass[11pt,letterpaper,twocolumn]{article}
+\usepackage[11pt,nocopyright]{sigmin}
+\usepackage[square,comma,numbers,sort&compress]{natbib}
+\usepackage[letterpaper,breaklinks,colorlinks]{hyperref}
+\usepackage{xcolor}
+\hypersetup{citecolor=blue,linkcolor=blue}
+\usepackage{amsmath,amsopn,amssymb}
+%\usepackage{subfigure}
+\usepackage{endnotes,microtype,xspace,graphicx,fancyvrb,multirow}
+\usepackage{booktabs}
+\usepackage{array,underscore,relsize}
+\usepackage[T1]{fontenc}
+\usepackage{times}
+
+\input{cmds}
+\begin{document}
+
+\title{Security bugs in embedded interpreters}
+\author{
+%\large
+Haogang Chen \; Cody Cutler \; Taesoo Kim \; Yandong Mao \; Xi Wang \\
+Nickolai Zeldovich \; M. Frans Kaashoek \\
+\vspace{0.01in}\\
+%\large
+\emph{MIT CSAIL}}
+\date{}%\vspace{-0.3in}
+\maketitle
+
+\input{abstract.tex}
+\input{intro.tex}
+\input{vm.tex}
+\input{vuln.tex}
+\input{chal.tex}
+\input{conc.tex}
+
+\bibliographystyle{abbrvnat}
+\footnotesize
+\setlength{\bibsep}{3pt}
+\bibliography{n-str,p,n,n-conf}
+\end{document}

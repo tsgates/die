@@ -1,0 +1,80 @@
+\section{Introduction}
+\label{s:intro}
+
+Many systems offer customizing by allowing third parties to download executable
+extensions~\cite{engler:exokernel}.  For flexibility and portability reasons,
+these systems often define an instruction set, in the form of bytecode, and
+implement an \emph{embedded interpreter} to run downloaded bytecode.  For
+performance reasons, they may translate bytecode into machine code before
+execution~\cite{engler:vcode}, using a just-in-time~(JIT) compiler.
+%
+One example is the Berkeley Packet Filter~(BPF)~\cite{mccanne:bpf}.  An OS
+kernel accepts packet filters from user space, in the form of bytecode.  The
+kernel implements an interpreter to execute the BPF bytecode against network
+packets and drop unwanted ones.
+
+These embedded interpreters raise interesting security concerns.
+Because they are running within the \emph{same} address
+space of the host system, a comprise of the interpreter is likely to
+lead to a comprise of the host system as well.
+In addition, the bytecode~(e.g., BPF filters)
+they interpret also accepts input data~(e.g., network packets);
+in other words,
+both the bytecode and input data to the bytecode
+are often \emph{untrusted},
+leading to a wide range of possible attack vectors.
+An embedded interpreter has to defend against both
+malicious bytecode and malicious input data;
+failing to do so leads to a comprise.
+
+This paper investigates the security implication of
+deploying embedded interpreters in systems.
+The first contribution is
+a case study of how systems use embedded interpreters in practice.
+As we will show in \autoref{s:vm},
+they are surprisingly widespread.
+For example,
+the Linux kernel alone hosts multiple embedded interpreters,
+which are used for packet filtering~\cite{mccanne:bpf},
+system call filtering~\cite{seccomp-bpf},
+network monitoring~\cite{inetdiag:ss},
+and power management~\cite{aml:spec}.
+The Clam AntiVirus~(\clamav) engine
+runs an interpreter to execute custom virus signatures~\cite{clamav:llvm},
+while it runs another for inspecting RAR files,
+which can contain bytecode for decompression~\cite{rar:vm}.
+Even a TrueType font file can contain bytecode for rendering;
+the infamous JailbreakMe exploited a vulnerability in the TrueType
+interpreter via a crafted font file, leading to privilege escalation on iOS
+devices~\cite{sigwald:jailbreakme}.
+
+The second contribution of this paper is a case study of
+attack vectors to embedded interpreters.
+In the worst-case scenario,
+an adversary can control both the bytecode and the input data.
+Depending on the instruction set,
+an embedded interpreter may have to
+regulate memory access,
+handle undefined operations~(e.g., division by zero),
+and avoid resource exhaustion~(e.g., infinite loops).
+As for BPF, failing to defend against malicious code and data will lead
+to kernel vulnerabilities, the consequences of which include crash,
+information leak, and even arbitrary code execution.
+\autoref{s:vuln} illustrates such vulnerabilities
+and their attack vectors.
+
+Unlike general-purpose language runtimes~(e.g., Java and Python),
+these embedded interpreters are domain-specific and often Turing-incomplete;
+many real-world systems do \emph{not} adopt
+sandboxing techniques such as process isolation~\cite{reis:chrome}
+and software fault isolation~\cite{wahbe:sfi} for them,
+possibly due to performance considerations.
+Instead, embedded interpreters validate untrusted bytecode using ad-hoc
+rules, which is error-prone.
+In \autoref{s:chal}
+we will summarize state-of-the-art defense techniques
+and discuss research directions for improving the security
+of embedded interpreters.
+For example,
+testing these interpreters is especially challenging because
+one needs to consider corner cases of both code and data.

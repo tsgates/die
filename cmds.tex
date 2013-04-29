@@ -1,0 +1,83 @@
+\renewcommand{\ttdefault}{pxtt}
+
+\newcommand{\URL}{\url}
+\newcommand{\cc}[1]{\mbox{\smaller[0.5]\texttt{#1}}}
+
+%\clubpenalty=10000
+%\widowpenalty=10000
+
+%\linespread{1.2}
+
+\fvset{fontsize=\scriptsize,xleftmargin=8pt,numbers=left,numbersep=5pt}
+
+\input{code/fmt}
+\newcommand{\figrule}{\hrule width \hsize height .33pt}
+\newcommand{\coderule}{\vspace{-0.4em}\figrule}
+
+\setlength{\abovedisplayskip}{0pt}
+\setlength{\abovedisplayshortskip}{0pt}
+\setlength{\belowdisplayskip}{0pt}
+\setlength{\belowdisplayshortskip}{0pt}
+\setlength{\jot}{0pt}
+
+\def\Snospace~{\S{}}
+\renewcommand*\sectionautorefname{\Snospace}
+\def\sectionautorefname{\Snospace}
+\def\subsectionautorefname{\Snospace}
+\def\subsubsectionautorefname{\Snospace}
+\def\chapterautorefname{\Snospace}
+%\renewcommand{\figurename}{Fig.}
+%\def\figureautorefname{\figurename}
+\newcommand{\subfigureautorefname}{\figureautorefname}
+
+%\numberwithin{equation}{section}
+
+\newcommand{\CXX}{C\raisebox{.1ex}{\texttt{++}}\xspace}
+\newcommand{\clamav}{\mbox{ClamAV}\xspace}
+\newcommand{\inetdiag}{\mbox{INET-DIAG}\xspace}
+\newcommand{\rarvm}{\mbox{RarVM}\xspace}
+\newcommand{\yes}{Y}
+\newcommand{\no}{}
+
+% sema
+\newcommand{\shl}{\ \cc{<}\cc{<}\ }
+\newcommand{\shr}{\ \cc{>}\cc{>}\ }
+
+\if 0
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\dbltopfraction}{0.9}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.05}
+\renewcommand{\floatpagefraction}{0.9}
+\renewcommand{\dblfloatpagefraction}{0.9}
+\setcounter{topnumber}{10}
+\setcounter{bottomnumber}{10}
+\setcounter{totalnumber}{10}
+\setcounter{dbltopnumber}{10}
+\fi
+
+\newif\ifdraft\drafttrue
+\newif\ifnotes\notestrue
+\ifdraft\else\notesfalse\fi
+
+% Define \XXX, \XXX[notes] and \XXX[author][notes]
+\definecolor{xxxcolor}{rgb}{0.8,0,0}
+\makeatletter
+\long\def\XXX{\@ifnextchar[{\@XXX}{\@XXX[]}}
+\long\def\@XXX[#1]{\@ifnextchar[{\@@@XXX{#1}}{\@@XXX{#1}}}
+\ifnotes
+% Show XXX comments
+\long\def\@@XXX#1{{\color{xxxcolor} XXX #1}\xspace}
+\long\def\@@@XXX#1[#2]{{\color{xxxcolor} XXX (#1) #2}\xspace}
+\else
+% Hide XXX comments
+\long\def\@@XXX#1{\ignorespaces}
+\long\def\@@@XXX#1[#2]{\ignorespaces}
+\fi
+\makeatother
+
+%% Ensure ligatures (e.g., ``fine official flag'') can be copy/pasted from PDF.
+\input{glyphtounicode}
+\pdfgentounicode=1
+
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}

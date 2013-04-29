@@ -1,0 +1,71 @@
+\begin{figure*}
+\scriptsize
+\centering
+\begin{tabular}{lcccccclll}
+\toprule
+interpreter & arith. & br. & loop & func. & ext. & JIT
+   & \shortstack{bytecode\\source} & \shortstack{input\\source}
+   & description \\ \midrule
+\inetdiag
+& \no  & \yes & \no  & \no  & \no  & \no
+& user space & kernel
+& network monitoring~\cite{inetdiag:ss}
+\\
+BPF
+& \yes & \yes & \no  & \no  & \no  & \yes
+& user space & network
+& packet \& syscall filtering~\cite{mccanne:bpf, seccomp-bpf}
+\\
+AML
+& \yes & \yes & \yes & \yes & \yes  & \no
+& firmware & device
+& power management~\cite{aml:spec}
+\\
+Bitcoin
+& \yes  & \yes & \no   & \no  & \no  & \no
+& network & network
+& digital currency~\cite{bitcoin-paper, bitcoin:script}
+\\
+ClamAV
+& \yes  & \yes & \yes  & \yes & \no  & \yes
+& \multicolumn{2}{c}{file \& network}
+& antivirus engine~\cite{clamav:llvm}
+\\
+TrueType
+& \yes  & \yes & \yes  & \yes & \no  & \no
+& \multicolumn{2}{c}{file \& browser}
+& font rendering~\cite{truetype:inst, truetype:intro}
+\\
+Type 2
+& \yes  & \yes & \no   & \yes & \no  & \no
+& \multicolumn{2}{c}{file \& browser}
+& font rendering~\cite{type2:spec}
+\\
+UDVM
+& \yes  & \yes & \yes  & \yes & \no  & \no
+& file & network
+& universal decompressor~\cite{udvm:rfc}
+\\
+RarVM
+& \yes  & \yes & \yes  & \yes & \yes  & \no
+& file & file
+& decompressor filter~\cite{rar:vm}
+\\
+Pickle
+& \no   & \no  & \no  & \yes & \yes  & \no
+& \multicolumn{2}{c}{file \& network}
+& data serialization~\cite{pickle:vm}
+\\
+\bottomrule
+\end{tabular}
+\caption{Summary of embedded interpreters and their features.
+Here
+``arith.'' means arithmetic operations;
+``br.'' means conditional branches and forward-only jumps;
+``func.'' means user-defined functions;
+``extern'' means external function calls;
+``JIT'' indicates whether there is a known JIT implementation. }
+\label{fig:vms}
+\end{figure*}
+
+
