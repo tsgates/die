@@ -3,6 +3,10 @@
 DIC=$1
 TEX=$2
 
+# p: skip a param
+# P: don't skip a param
+# o: skip an optional param
+# O: don't skip an optional param
 TEXCMD=(--add-tex-command="autoref p"
         --add-tex-command='begin pp'
 	      --add-tex-command='bibliography p'
