@@ -373,7 +373,10 @@ if __name__ == '__main__':
         errs = list(parser.get_errors())
         for e in errs:
             found = True
+            if "line" not in e:
+                e["line"] = "-"
             print("{file}:{line}:\033[0;31m{kind}\033[0m:{text}".format(**e))
-            print("> {code}".format(**e))
+            if "code" in e:
+                print("> {code}".format(**e))
 
     exit(0 if found else 1)
