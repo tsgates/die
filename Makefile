@@ -1,15 +1,10 @@
 MAIN ?= p
-LTMK := bin/latexmk
 DEPS := rev.tex code/fmt.tex abstract.txt
 
-define latexmk =
-  $(LTMK) -silent -pdf "$1" &>/dev/null \
-     || (bin/parse-latex-log.py "$1.log"; exit 1)
-endef
-
 all: $(DEPS)
-	$(call latexmk,$(MAIN))
+	@bin/build.sh $(MAIN)
 
+.PHONY: FORCE
 rev.tex: FORCE
 	@printf '\\gdef\\therev{%s}\n\\gdef\\thedate{%s}\n' \
 	   "$(shell git rev-parse --short HEAD)"            \
@@ -21,7 +16,7 @@ code/fmt.tex:
 .PHONY: draft
 draft: $(DEPS)
 	echo -e '\\newcommand*{\\DRAFT}{}' >> rev.tex
-	$(call latexmk,$(MAIN))
+	@bin/build.sh $(MAIN)
 
 .PHONY: spell
 spell:
