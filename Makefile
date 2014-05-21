@@ -4,6 +4,10 @@ DEPS := rev.tex code/fmt.tex abstract.txt
 all: $(DEPS)
 	@bin/build.sh $(MAIN)
 
+.PHONY: help
+help:
+	echo "..."
+
 .PHONY: FORCE
 rev.tex: FORCE
 	@printf '\\gdef\\therev{%s}\n\\gdef\\thedate{%s}\n' \
@@ -27,14 +31,14 @@ spell:
 
 .PHONY: clean
 clean:
-	$(LTMK) -C p
+	bin/latexmk -C p
 	rm -f abstract.txt
 
 .PHONY: distclean
 distclean: clean
 	rm -f code/*.tex
 
-SYS = $(shell sed -n -e 's/\\newcommand{\\sys}{\\mbox{\\textsc{\([^}]*\)}.*/\1/p' cmds.tex)
+SYS := $(shell sed -n -e 's/\\newcommand{\\sys}{\\mbox{\\textsc{\([^}]*\)}.*/\1/p' cmds.tex)
 abstract.txt: abstract.tex
 	@cat $<                         \
 	    | grep -v '{abstract}'      \

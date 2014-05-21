@@ -1,0 +1,37 @@
+die: a deadline-oriented paper template
+=======================================
+
+## start @2 weeks before submission deadline
+
+1. clone the git repo:
+
+- if you have none,
+
+    $ git clone --depth=1 git@github.com:tsgates/die.git
+
+- if you have a git-repo to work on,
+
+    $ git subtree add --squash git@github.com:tsgates/die.git -P paper
+
+2. build it:
+
+    $ make
+    p.pdf built @Tue May 20 20:38:19 EDT 2014
+    
+    (check p.pdf)
+
+3. starting point, p.tex:
+
+    $ grep -oP 'input{\K\w+' p.tex
+    cmds
+    rev
+    abstract
+    intro
+    overview
+    design
+    impl
+    eval
+    conclusion
+    ack
+
+## 
