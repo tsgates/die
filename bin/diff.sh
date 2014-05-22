@@ -14,6 +14,8 @@ git clone $NEWD $OLDD
 
 cd $OLDD
 git checkout $1
+
+make
 latexdiff --flatten p.tex $NEWD/p.tex > diff.tex
 
 make MAIN=diff

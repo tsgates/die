@@ -13,4 +13,6 @@
 /rev.tex
 /abstract.txt
 !/figs/*.pdf
+!/figs/*.eps
 !/data/*.pdf
+!/data/*.eps
