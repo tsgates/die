@@ -1,20 +1,23 @@
 \section{Cheat sheet by examples}
 \label{s:ex}
 
+\paragraph{Commands.}
 % use \sys
-\sys is an attempt to help students in using {\LaTeX} for writing a
-paper.
-% how to refer
-This is how to refer section, \autoref{s:ex} and table,
-\autoref{t:simple} and \autoref{f:turtle}.
-% how to cite
-This is how to cite my papers~\cite{kim:userfs,kim:poirot}.
-% url
-Linked and colored url, \url{http://taesoo.org}. 
-These are how to make comments.
+\sys helps students to use {\LaTeX} for writing a paper.
+To comment on the paper, use
 \TODO{to do.}
 \XXX{fix this.}
 \TK{it's mine.}
+
+\paragraph{Pointing.}
+% how to refer
+Use \autoref{s:ex} to refer a section, 
+use \autoref{t:simple} for a table,
+and use \autoref{f:turtle} for a figure. 
+To cite, use~\cite{kim:userfs,kim:poirot}. 
+To refer a website, use \url{http://taesoo.org}. 
+
+\paragraph{Forms.}
 
 % compact list, [leftmargin=.2in]
 \begin{itemize}[noitemsep,nolistsep]
@@ -23,6 +26,54 @@ These are how to make comments.
  \item bar
  \item baz
 \end{itemize}
+
+\paragraph{Generated figures.}
+
+To render a svg, put the file to \cc{fig}, and include 
+it to the latex like below. 
+
+\begin{figure}[h]
+\centering
+\footnotesize
+\includegraphics[width=0.5\columnwidth]{fig/ex-turtle}
+\caption{A simple figure, generated from svg.}
+\label{f:turtle}
+\end{figure}
+
+Similarly, to render a code, put a code snippet to \cc{code}, 
+and include it to the latex like below.
+
+\begin{figure}[h]
+\centering
+\footnotesize
+\input{code/ex-code}
+\caption{A highlighted code snippet, generated from 
+ \cc{data/ex-code.py}
+}
+\label{f:code}
+\end{figure}
+
+Similarly, to render a \cc{gnuplot}, put a \cc{gnuplot}
+script to \cc{data} with your actual data, 
+and include it to the latex like below.
+
+\begin{figure}[h]
+\centering
+\footnotesize
+\includeplot{data/ex-gaussian}
+\caption{A simple plot, generated directly from \cc{gnuplot}.}
+\label{f:gaussian}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\footnotesize
+\includeplot{data/ex-plot}
+\caption{A simple plot, generated from dat.}
+\label{f:plot}
+\end{figure}
+
+\paragraph{Table.}
 
 % param: (cap-> force)
 %  {h/H}ere
@@ -36,32 +87,6 @@ These are how to make comments.
 \label{t:simple}
 \end{table}
 
-\begin{figure}[h]
-\centering
-\footnotesize
-\includegraphics[width=0.5\columnwidth]{fig/ex-turtle}
-\caption{A simple figure, generated from svg.}
-\label{f:turtle}
-\end{figure}
-
-\begin{figure}[t]
-\centering
-\footnotesize
-\input{code/ex-code}
-\caption{A highlighted code snippet, generated from 
- \cc{data/ex-code.py}
-}
-\label{f:code}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\footnotesize
-\includeplot{data/ex-gaussian}
-\caption{A simple plot, generated directly from gnuplot.}
-\label{f:gaussian}
-\end{figure}
-
 \begin{table*}[t]
 \centering
 \footnotesize
@@ -69,11 +94,3 @@ These are how to make comments.
 \caption{A big table.}
 \label{t:big}
 \end{table*}
-
-\begin{figure}[t]
-\centering
-\footnotesize
-\includeplot{data/ex-plot}
-\caption{A simple plot, generated from dat.}
-\label{f:plot}
-\end{figure}
