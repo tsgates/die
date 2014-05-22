@@ -2,7 +2,7 @@
 \label{s:ex}
 
 % use \sys
-\sys is an attempt to help students in using \LaTex for writing a
+\sys is an attempt to help students in using {\LaTeX} for writing a
 paper.
 % how to refer
 This is how to refer section, \autoref{s:ex} and table,
@@ -54,6 +54,14 @@ These are how to make comments.
 \label{f:code}
 \end{figure}
 
+\begin{figure}[H]
+\centering
+\footnotesize
+\includeplot{data/ex-gaussian}
+\caption{A simple plot, generated directly from gnuplot.}
+\label{f:gaussian}
+\end{figure}
+
 \begin{table*}[t]
 \centering
 \footnotesize
@@ -62,15 +70,7 @@ These are how to make comments.
 \label{t:big}
 \end{table*}
 
-\begin{figure}[T]
-\centering
-\footnotesize
-\includeplot{data/ex-gaussian}
-\caption{A simple plot, generated directly from gnuplot.}
-\label{f:gaussian}
-\end{figure}
-
-\begin{figure}[T]
+\begin{figure}[t]
 \centering
 \footnotesize
 \includeplot{data/ex-plot}
