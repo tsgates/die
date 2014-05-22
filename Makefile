@@ -38,7 +38,7 @@ clean:
 distclean: clean
 	rm -f code/*.tex
 
-SYS := $(shell sed -n -e 's/\\newcommand{\\sys}{\\mbox{\\textsc{\([^}]*\)}.*/\1/p' cmds.tex)
+SYS := $(shell sed -n -e 's/\\newcommand{\\sys}{\\mbox{\\textsc{\([^}]*\)}.*/\1/p' $(MAIN).tex)
 abstract.txt: abstract.tex
 	@cat $<                         \
 	    | grep -v '{abstract}'      \
