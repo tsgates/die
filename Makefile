@@ -36,6 +36,10 @@ clean:
 distclean: clean
 	rm -f code/*.tex
 
+init:
+	rm -f {code,fig,data}/ex-*
+	perl -pi -e 's/^\\input{ex}/% \\input{ex}/g' $(MAIN).tex
+
 SYS := $(shell sed -n -e 's/\\newcommand{\\sys}{\\mbox{\\textsc{\([^}]*\)}.*/\1/p' $(MAIN).tex)
 abstract.txt: abstract.tex
 	@cat $<                         \
@@ -48,4 +52,4 @@ abstract.txt: abstract.tex
 	    | sed -e 's/\\sys/${SYS}/g' \
 	    | fmt -w72 > $@
 
-.PHONY: all help FORCE draft clean spell distclean
+.PHONY: all help FORCE draft clean spell distclean init

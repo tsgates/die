@@ -1,7 +1,7 @@
-die: a deadline-oriented paper template
-=======================================
+die: a paper template
+=====================
 
-## start @2 weeks before submission deadline
+## start
 
 1. clone the git repo:
 
@@ -25,8 +25,9 @@ die: a deadline-oriented paper template
     $ grep -oP 'input{\K\w+' p.tex
     cmds
     rev
-    hdr
+   *hdr
     abstract
+   *ex
     intro
     overview
     design
@@ -35,4 +36,22 @@ die: a deadline-oriented paper template
     conclusion
     ack
 
-## 
+  - hdr: includes title/author info
+  - ex : includes latex examples
+
+4. clean-slate template
+
+    $ make init
+
+## make a draft for revision
+
+    $ make draft
+
+## submit p.pdf & abstract.txt
+
+    $ cat abstract.txt
+
+## highlight changes, since the last submit
+
+    $ make diff DIFF=HEAD@{}
+
