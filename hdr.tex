@@ -1,14 +1,26 @@
 \title{Title}
 
+% when 'make draft'
 \ifdefined\DRAFT
-\pagestyle{fancyplain}
-\author{Paper \#7, \pageref{LastPage} pages}
-\lhead{Rev.~\therev}
-\rhead{\thedate}
-\cfoot{\thepage\ of \pageref{LastPage}}
-\else
-\author{
-Taesoo Kim \; Nickolai Zeldovich \\
-\vspace{0.01in}\\
-\emph{MIT CSAIL}}
+ \pagestyle{fancyplain}
+ \lhead{Rev.~\therev}
+ \rhead{\thedate}
+ \cfoot{\thepage\ of \pageref{LastPage}}
 \fi
+
+% blind
+% \author{Paper \#123}
+
+\author{
+ Isaac Newton$^\dagger$\; 
+ Albert Einstein$^\ddagger$\;
+ Marie Curie$^\ast$\;
+ James Clerk Maxwell$^\dagger$\;
+\\
+ Richard Feynman$^\dagger$\;
+\\\\
+ \emph{$^\dagger$  Trinity College}, \\
+ \emph{$^\ddagger$ University of Zurich}, 
+ \emph{$^\ast$ 	 University of Paris}
+}
+

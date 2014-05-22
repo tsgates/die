@@ -25,7 +25,13 @@ TEXCMD=(--add-tex-command="autoref p"
       	--add-tex-command='renewcommand pp'
       	--add-tex-command='usetikzlibrary p'
       	--add-tex-command='DeclareMathOperator pp'
-      	--add-tex-command='VerbatimInput p')
+      	--add-tex-command='VerbatimInput p'
+        --add-tex-command='includefig pp')
 
-aspell -t "${TEXCMD[@]}" -p $DIC -c $TEX
-(head -1 aspell.words; tail -n +2 $DIC | LC_ALL=C sort) > $DIC
+aspell -x --mode=tex "${TEXCMD[@]}" -p $DIC -c $TEX
+
+VER=$(head -1 $DIC)
+tail -n +2 $DIC | LC_ALL=C sort > $DIC~
+
+echo $VER > $DIC
+cat $DIC~ >> $DIC

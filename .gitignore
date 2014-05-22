@@ -1,10 +1,10 @@
 *~
-/*.aux
+*.aux
+*.fdb_latexmk
 /*.bak
 /*.bbl
 /*.blg
 /*.dvi
-/*.fdb_latexmk
 /*.fls
 /*.log
 /*.out
@@ -12,3 +12,5 @@
 /*.pdf
 /rev.tex
 /abstract.txt
+!/figs/*.pdf
+!/data/*.pdf
