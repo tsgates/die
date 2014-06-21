@@ -4,7 +4,11 @@ PDF=$1.pdf
 
 mod() {
   if [[ -e $1 ]]; then
-    stat -c %Y $1
+    if [[ `uname` == "Darwin" ]]; then
+      stat -f "%m" $1
+    else 
+      stat -c %Y $1
+    fi
   fi
 }
 
