@@ -5,11 +5,11 @@ die: a paper template
 
 1. clone the git repo:
 
-- if you have none,
+  - if you have none,
 
     $ git clone --depth=1 git@github.com:tsgates/die.git
 
-- if you have a git-repo to work on,
+  - if you have a git-repo to work on,
 
     $ git subtree add --squash git@github.com:tsgates/die.git -P paper
 
@@ -43,15 +43,29 @@ die: a paper template
 
     $ make init
 
-## make a draft for revision
+5. formatting rules (dependencies)
+
+  - code/*.{c,cc,py,js ...} -> code/*.tex
+  - fig/*.svg               -> fig/*.pdf
+  - data/*.gp               -> fig/*.tex
+
+  (see ex.tex for more details)
+
+## tools
+
+1. make a draft for revision
 
     $ make draft
 
-## submit p.pdf & abstract.txt
+2. abstract.txt (from abstract.tex)
 
-    $ cat abstract.txt
+    $ cat abstract.txt 
 
-## highlight changes, since the last submit
+3. highlight changes, since the last submit
 
     $ make diff DIFF=HEAD@{}
+
+4. spell check
+
+    $ make spell
 
