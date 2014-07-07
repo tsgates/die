@@ -12,7 +12,10 @@
 /*.pdf
 /rev.tex
 /abstract.txt
+/code/*.tex
+!/code/fmt.tex
 !/figs/*.pdf
 !/figs/*.eps
 !/data/*.pdf
 !/data/*.eps
+.latexrun.db

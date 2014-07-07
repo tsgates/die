@@ -1,9 +1,12 @@
 MAIN ?= p
 DIFF ?= HEAD^
-DEPS := rev.tex code/fmt.tex abstract.txt
+CODE := $(addsuffix .tex,$(filter-out %.tex,$(wildcard code/*)))
+FIGS := $(patsubst %.svg,%.pdf,$(wildcard fig/*.svg))
+PLOT := $(patsubst %.gp,%.tex,$(wildcard data/*.gp))
+DEPS := rev.tex code/fmt.tex abstract.txt $(CODE) $(FIGS) $(PLOT)
 
 all: $(DEPS)
-	@bin/build.sh $(MAIN)
+	@bin/latexrun $(MAIN)
 
 diff: $(DEPS)
 	@bin/diff.sh $(DIFF)
@@ -16,8 +19,17 @@ rev.tex: FORCE
 	   "$(shell git rev-parse --short HEAD)"            \
 	   "$(shell git log -1 --format='%ci' HEAD)" > $@
 
+code/%.tex: code/%
+	pygmentize -P tabsize=4 -P mathescape -f latex $^ > $@
+
 code/fmt.tex:
 	pygmentize -f latex -S default > $@
+
+fig/%.pdf: fig/%.svg
+	inkscape --without-gui -f $^ -D -A $@
+
+data/%.tex: data/%.gp
+	gnuplot $^
 
 draft: $(DEPS)
 	echo -e '\\newcommand*{\\DRAFT}{}' >> rev.tex
