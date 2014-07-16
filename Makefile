@@ -42,7 +42,7 @@ spell:
 	@bin/hyphens.sh *.tex
 
 clean:
-	bin/latexmk -C p
+	@bin/latexrun --clean
 	rm -f abstract.txt
 
 distclean: clean
