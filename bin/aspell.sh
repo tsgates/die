@@ -8,7 +8,7 @@ TEX=$2
 # o: skip an optional param
 # O: don't skip an optional param
 TEXCMD=(--add-tex-command="autoref p"
-        --add-tex-command='begin pp'
+        --add-tex-command='begin pop'
 	      --add-tex-command='bibliography p'
       	--add-tex-command='bibliographystyle p'
       	--add-tex-command='cc p'
@@ -21,6 +21,9 @@ TEXCMD=(--add-tex-command="autoref p"
       	--add-tex-command='lstset p'
       	--add-tex-command='mathit p'
       	--add-tex-command='mathrm p'
+      	--add-tex-command='includeplot p'
+      	--add-tex-command='includepdf p'
+      	--add-tex-command='therev p'
       	--add-tex-command='newcommand pp'
       	--add-tex-command='renewcommand pp'
       	--add-tex-command='usetikzlibrary p'
@@ -28,7 +31,8 @@ TEXCMD=(--add-tex-command="autoref p"
       	--add-tex-command='VerbatimInput p'
         --add-tex-command='includefig pp')
 
-aspell -x --mode=tex "${TEXCMD[@]}" -p $DIC -c $TEX
+touch $DIC
+aspell --lang en -x --mode=tex "${TEXCMD[@]}" -p $(pwd)/$DIC -c $TEX
 
 VER=$(head -1 $DIC)
 tail -n +2 $DIC | LC_ALL=C sort > $DIC~

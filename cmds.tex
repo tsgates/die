@@ -31,11 +31,6 @@
 \newcommand{\subfigureautorefname}{\figureautorefname}
 
 %\numberwithin{equation}{section}
-
-\newcommand{\CXX}{C\raisebox{.1ex}{\texttt{++}}\xspace}
-\newcommand{\clamav}{\mbox{ClamAV}\xspace}
-\newcommand{\inetdiag}{\mbox{INET-DIAG}\xspace}
-\newcommand{\rarvm}{\mbox{RarVM}\xspace}
 \newcommand{\yes}{Y}
 \newcommand{\no}{}
 
@@ -82,4 +77,13 @@
 }
 \newcommand{\includeplot}[1]{
   \resizebox{\columnwidth}{!}{\input{#1}}
+}
+
+% list
+\newcommand{\squishlist}{
+\begin{itemize}[noitemsep,nolistsep]
+  \setlength{\itemsep}{-0pt}
+}
+\newcommand{\squishend}{
+  \end{itemize}
 }

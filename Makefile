@@ -36,7 +36,7 @@ draft: $(DEPS)
 	@bin/build.sh $(MAIN)
 
 spell:
-	@for i in *.tex *.bbl; do bin/aspell.sh aspell.words $$i; done
+	@for i in *.tex fig/*.tex; do bin/aspell.sh aspell.words $$i; done
 	@for i in *.tex; do bin/double.pl $$i; done
 	@for i in *.tex; do bin/abbrv.pl  $$i; done
 	@bin/hyphens.sh *.tex
