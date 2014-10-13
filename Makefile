@@ -6,7 +6,12 @@ PLOT := $(patsubst %.gp,%.tex,$(wildcard data/*.gp))
 DEPS := rev.tex code/fmt.tex abstract.txt $(CODE) $(FIGS) $(PLOT)
 
 all: $(DEPS)
-	@bin/latexrun $(MAIN)
+	@TEXINPUTS="sty:" bin/latexrun $(MAIN)
+
+submit: $(DEPS)
+	@for f in $(wildcard submit-*.tex); do \
+		TEXINPUTS="sty:" bin/latexrun $$f; \
+	done
 
 diff: $(DEPS)
 	@bin/diff.sh $(DIFF)

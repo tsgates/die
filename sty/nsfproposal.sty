@@ -1,0 +1,101 @@
+% Thin template for NSF proposals
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{nsfproposal}
+
+\usepackage[empty]{fullpage}
+\usepackage{times}
+
+\usepackage[square,comma,numbers,sort]{natbib}
+\PassOptionsToPackage{hyphens}{url}
+\usepackage[breaklinks,
+%	    draft, 
+%	    final,
+	    pdfdisplaydoctitle=true,
+%	    pdfborderstyle={/S/U/W 1}, % try for a dashed underline
+%	    pdfborderstyle={/S/D/D[1 4]/W 1}, % try for a dashed underline
+%	    bookmarksdepth=3,
+	    pagebackref,
+	    bookmarksnumbered=true,
+	    linktocpage,
+	    citebordercolor={.60 .60 .60}, 
+	    linkbordercolor={.60 .60 .60},
+	    urlbordercolor={.60 .60 .60},
+	    pdfpagelabels,
+	    pdfpagelayout=SinglePage,
+	    hyperfootnotes=false,
+%	    letterpaper,
+%	    pdftitle=
+%	    {Proposal Title},
+%	    pdfauthor={Authors}
+	    ]{hyperref}
+
+\renewcommand{\ttdefault}{cmtt}
+
+\renewcommand*{\backref}[1]{}
+\renewcommand*{\backrefalt}[4]{
+  \ifcase #1 %
+    (Not cited.) %
+  \or
+    {(Referenced on page #2.)}%
+  \else
+    {(Referenced on pages #2.)}%
+  \fi
+}
+\renewcommand*{\backrefsep}{, }
+\renewcommand*{\backreftwosep}{ and }
+\renewcommand*{\backreflastsep}{, and }
+
+\usepackage{ccaption}
+\captionnamefont{\sc\fontsize{10}{12}\selectfont}
+\captiontitlefont{\fontsize{10}{12}\selectfont}
+\captiondelim{---}
+
+\frenchspacing
+
+\setlength{\footskip}{30pt}
+
+% \newcommand{\threequartdash}{\hbox{--\kern-.25em--}}
+% \renewcommand{\labelitemi}{\m@th\threequartdash} 
+% \renewcommand{\labelitemii}{\m@th$\ast$}
+% \renewcommand{\labelitemiii}{\m@th\bullet}
+
+\def\paragraph{\@startsection{paragraph}{4}{\z@}%
+	      {1.85ex \@plus .15ex \@minus .1ex}%
+	      {-.5\parindent}%
+	      {\normalfont\normalsize\bfseries}}
+
+
+% DM's macro for splitting the sections up
+% USAGE:
+%   \begin{submit}{section-letter}{submit-file-name}
+%	text to include in that submitted section of proposal
+%   \end{submit}
+%
+\newwrite\submitfile
+\newcounter{submitstart}
+\setcounter{submitstart}{1}
+\newcounter{submitend}
+\newenvironment{submit}[2]%
+{\renewcommand{\thepage}{#1-\arabic{page}}
+\renewcommand{\thesection}{#1.\arabic{section}}
+\gdef\submitfilename{#2}
+\addtocounter{submitstart}{\value{page}}
+\addtocounter{submitstart}{-1}
+\setcounter{page}{1}}%
+{\setcounter{submitend}{\value{submitstart}}
+\addtocounter{submitend}{\value{page}}
+\addtocounter{submitend}{-1}
+\immediate\openout\submitfile=\submitfilename
+\immediate\write\submitfile{%
+\string\documentclass{article}^^J%
+\string\usepackage{pdfpages}^^J%
+\string\begin{document}^^J%
+\string\includepdf%
+[pages=\the\value{submitstart}-\the\value{submitend}]%
+{\jobname.pdf}^^J%
+\string\end{document}}
+\immediate\closeout\submitfile
+\newpage
+}
+

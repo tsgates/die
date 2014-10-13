@@ -336,9 +336,9 @@ prior specific permission and/or a fee.}
 \belowcaptionskip=-0.5\baselineskip
 \long\def\@makecaption#1#2{%
   \vskip\abovecaptionskip
-  \sbox\@tempboxa{{\footnotesize{\bfseries #1}: #2}}%
+  \sbox\@tempboxa{{\small{\bfseries #1}: #2}}%
   \ifdim \wd\@tempboxa >\hsize
-    {\begin{footnotesize}{\bfseries #1}: #2\par\end{footnotesize}}
+    {\begin{small}{\bfseries #1}: #2\par\end{small}}
   \else
     \global \@minipagefalse
     \hb@xt@\hsize{\hfil\box\@tempboxa\hfil}%
