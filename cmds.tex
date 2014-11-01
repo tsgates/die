@@ -87,3 +87,14 @@
 \newcommand{\squishend}{
   \end{itemize}
 }
+
+%%
+%% NOTE.
+%%  to use circled number in caption, use
+%%   (e.g., \protect\C{1})
+%%
+\usepackage{tikz}
+\newcommand*\C[1]{%
+\begin{tikzpicture}[baseline=(C.base)]
+\node[draw,circle,inner sep=0.2pt](C) {#1};
+\end{tikzpicture}}
