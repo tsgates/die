@@ -1,5 +1,25 @@
 #!/usr/bin/env python3
 
+# Copyright (c) 2013, 2014 Austin Clements
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
 import sys
 import os
 import argparse
@@ -13,11 +33,17 @@ import shutil
 import curses
 import filecmp
 import io
+import traceback
+import time
 
 def debug(string, *args):
     if debug.enabled:
         print(string.format(*args), file=sys.stderr)
 debug.enabled = False
+
+def debug_exc():
+    if debug.enabled:
+        traceback.print_exc()
 
 def main():
     # Parse command-line
@@ -51,11 +77,15 @@ def main():
         '-W', metavar='(no-)CLASS',
         action=ArgParserWarnAction, dest='nowarns', default=set(['underfull']),
         help='Enable/disable warning from CLASS, which can be any package name, '
-        'LaTeX warning class (e.g., font), or bad box type '
-        '(underfull, overfull, loose, tight)')
+        'LaTeX warning class (e.g., font), bad box type '
+        '(underfull, overfull, loose, tight), or "all"')
     arg_parser.add_argument(
         '-O', metavar='DIR', dest='obj_dir', default='latex.out',
-        help='Directory for intermediate files (default: %(default)s)')
+        help='Directory for intermediate files and control database '
+        '(default: %(default)s)')
+    arg_parser.add_argument(
+        '--color', choices=('auto', 'always', 'never'), default='auto',
+        help='When to colorize messages')
     arg_parser.add_argument(
         '--verbose-cmds', action='store_true', default=False,
         help='Print commands as they are executed')
@@ -92,29 +122,36 @@ def main():
         sys.stderr.buffer, encoding=sys.stderr.encoding,
         errors='surrogateescape', line_buffering=sys.stderr.line_buffering)
 
+    Message.setup_color(args.color)
+
     # Open control database.
-    # XXX Is there a better place to put this?  If I'm cleaning, I
-    # don't have a file name, so it can't be relative to that.
-    dbpath = '.latexrun.db'
+    dbpath = os.path.join(args.obj_dir, '.latexrun.db')
+    if not os.path.exists(dbpath) and os.path.exists('.latexrun.db'):
+        # The control database used to live in the source directory.
+        # Support this for backwards compatibility.
+        dbpath = '.latexrun.db'
     try:
         db = DB(dbpath)
     except (ValueError, OSError) as e:
         print('error opening {}: {}'.format(e.filename if hasattr(e, 'filename')
                                             else dbpath, e),
               file=sys.stderr)
+        debug_exc()
         sys.exit(1)
 
     # Clean
     if args.clean_all:
         try:
-            db.do_clean()
+            db.do_clean(args.obj_dir)
         except OSError as e:
             print(e, file=sys.stderr)
+            debug_exc()
             sys.exit(1)
 
     # Build
     if not args.file:
         return
+    task_commit = None
     try:
         task_latex = LaTeX(db, args.file, args.latex_cmd, args.latex_args,
                            args.obj_dir, args.nowarns)
@@ -135,7 +172,23 @@ def main():
             status = max(status, 1)
     except TaskError as e:
         print(str(e), file=sys.stderr)
+        debug_exc()
         status = 1
+
+    # Report final status, if interesting
+    fstatus = 'There were errors' if task_commit is None else task_commit.status
+    if fstatus:
+        output = args.output
+        if output is None:
+            if task_latex.get_outname() is not None:
+                output = os.path.basename(task_latex.get_outname())
+            else:
+                output = 'output'
+        if Message._color:
+            terminfo.send('bold', ('setaf', 1))
+        print('{}; {} not updated'.format(fstatus, output))
+        if Message._color:
+            terminfo.send('sgr0')
     sys.exit(status)
 
 def arg_parser_shlex(string):
@@ -148,7 +201,9 @@ def arg_parser_shlex(string):
 class ArgParserWarnAction(argparse.Action):
     def __call__(self, parser, namespace, value, option_string=None):
         nowarn = getattr(namespace, self.dest)
-        if value.startswith('no-'):
+        if value == 'all':
+            nowarn.clear()
+        elif value.startswith('no-'):
             nowarn.add(value[3:])
         else:
             nowarn.discard(value)
@@ -190,6 +245,10 @@ class DB:
 
     def commit(self):
         debug('committing database')
+        # Make sure database directory exists
+        if os.path.dirname(self.__filename):
+            os.makedirs(os.path.dirname(self.__filename), exist_ok=True)
+        # Atomically commit database
         tmp_filename = self.__filename + '.tmp'
         with open(tmp_filename, 'w') as fp:
             json.dump(self.__val, fp, indent=2, separators=(',', ': '))
@@ -214,8 +273,12 @@ class DB:
         """
         self.__val.setdefault('clean', {})[filename] = hash_cache.get(filename)
 
-    def do_clean(self):
-        """Remove output files and delete database."""
+    def do_clean(self, obj_dir=None):
+        """Remove output files and delete database.
+
+        If obj_dir is not None and it is empty after all files are
+        removed, it will also be removed.
+        """
 
         for f, want_hash in self.__val.get('clean', {}).items():
             have_hash = hash_cache.get(f)
@@ -232,6 +295,11 @@ class DB:
             os.unlink(self.__filename)
         except FileNotFoundError:
             pass
+        if obj_dir is not None:
+            try:
+                os.rmdir(obj_dir)
+            except OSError:
+                pass
 
 class HashCache:
     """Cache of file hashes.
@@ -262,7 +330,7 @@ class HashCache:
                     h.update(block)
                 self.__cache[key] = h.hexdigest()
                 return self.__cache[key]
-        except FileNotFoundError:
+        except (FileNotFoundError, IsADirectoryError):
             return None
 
     def clobber(self, filename):
@@ -289,35 +357,50 @@ class HashCache:
                 del self.__cache[key]
 hash_cache = HashCache()
 
-class Progress:
-    _INITIALIZED = False
-    _enabled = False
-
-    def __init__(self, prefix):
-        self.__prefix = prefix
-        if not Progress._INITIALIZED:
-            Progress._INITIALIZED = True
-            if debug.enabled or not os.isatty(sys.stdout.fileno()):
-                return
-            # Fetch terminal capabilities we need
+class _Terminfo:
+    def __init__(self):
+        self.__tty = os.isatty(sys.stdout.fileno())
+        if self.__tty:
             curses.setupterm()
-            Progress.__ti = {}
-            for cap in ['cr', 'el', 'rmam', 'smam']:
+        self.__ti = {}
+
+    def __ensure(self, cap):
+        if cap not in self.__ti:
+            if not self.__tty:
+                string = None
+            else:
                 string = curses.tigetstr(cap)
                 if string is None or b'$<' in string:
                     # Don't have this capability or it has a pause
-                    return
-                Progress.__ti[cap] = string
-            Progress._enabled = True
+                    string = None
+            self.__ti[cap] = string
+        return self.__ti[cap]
 
-    def __send_caps(self, *caps):
+    def has(self, *caps):
+        return all(self.__ensure(cap) is not None for cap in caps)
+
+    def send(self, *caps):
         # Flush TextIOWrapper to the binary IO buffer
         sys.stdout.flush()
         for cap in caps:
             # We should use curses.putp here, but it's broken in
             # Python3 because it writes directly to C's buffered
             # stdout and there's no way to flush that.
-            sys.stdout.buffer.write(Progress.__ti[cap])
+            if isinstance(cap, tuple):
+                s = curses.tparm(self.__ensure(cap[0]), *cap[1:])
+            else:
+                s = self.__ensure(cap)
+            sys.stdout.buffer.write(s)
+terminfo = _Terminfo()
+
+class Progress:
+    _enabled = None
+
+    def __init__(self, prefix):
+        self.__prefix = prefix
+        if Progress._enabled is None:
+            Progress._enabled = (not debug.enabled) and \
+                                terminfo.has('cr', 'el', 'rmam', 'smam')
 
     def __enter__(self):
         self.last = ''
@@ -327,7 +410,7 @@ class Progress:
     def __exit__(self, typ, value, traceback):
         if Progress._enabled:
             # Beginning of line and clear
-            self.__send_caps('cr', 'el')
+            terminfo.send('cr', 'el')
             sys.stdout.flush()
 
     def update(self, msg):
@@ -338,36 +421,56 @@ class Progress:
             out += ' ' + msg
         if out != self.last:
             # Beginning of line, clear line, disable wrap
-            self.__send_caps('cr', 'el', 'rmam')
+            terminfo.send('cr', 'el', 'rmam')
             sys.stdout.write(out)
             # Enable wrap
-            self.__send_caps('smam')
+            terminfo.send('smam')
             self.last = out
             sys.stdout.flush()
 
 class Message(collections.namedtuple(
         'Message', 'typ filename lineno msg')):
-    def __str__(self):
+    def emit(self):
         if self.filename:
             if self.filename.startswith('./'):
-                out = self.filename[2:]
+                finfo = self.filename[2:]
             else:
-                out = self.filename
+                finfo = self.filename
         else:
-            out = '<no file>'
+            finfo = '<no file>'
         if self.lineno is not None:
-            out += ':' + str(self.lineno)
-        if self.typ != 'warning':
-            out += ': ' + self.typ
-        out += ': ' + self.msg
+            finfo += ':' + str(self.lineno)
+        finfo += ': '
+        if self._color:
+            terminfo.send('bold')
+        sys.stdout.write(finfo)
 
-        return out
+        if self.typ != 'info':
+            if self._color:
+                terminfo.send(('setaf', 5 if self.typ == 'warning' else 1))
+            sys.stdout.write(self.typ + ': ')
+        if self._color:
+            terminfo.send('sgr0')
+        sys.stdout.write(self.msg + '\n')
+
+    @classmethod
+    def setup_color(cls, state):
+        if state == 'never':
+            cls._color = False
+        elif state == 'always':
+            cls._color = True
+        elif state == 'auto':
+            cls._color = terminfo.has('setaf', 'bold', 'sgr0')
+        else:
+            raise ValueError('Illegal color state {:r}'.format(state))
+
 
 ##################################################################
 # Task framework
 #
 
 terminate_task_loop = False
+start_time = time.time()
 
 def run_tasks(tasks, max_iterations):
     """Execute tasks in round-robin order until all are stable.
@@ -510,7 +613,11 @@ class Task:
         for f in result.output_filenames:
             self.__db.add_clean(f)
 
-        self.__db.commit()
+        try:
+            self.__db.commit()
+        except OSError as e:
+            raise TaskError('error committing control database {}: {}'.format(
+                getattr(e, 'filename', '<unknown path>'), e)) from e
 
     def __make_summary(self, deps, run_result):
         """Construct a new task summary."""
@@ -538,7 +645,7 @@ class Task:
         return summary['extra']
 
     def report(self):
-        """Report the task's results to stderr and return exit status.
+        """Report the task's results to stdout and return exit status.
 
         This may be called when the task has never executed.
         Subclasses should override this.  The default implementation
@@ -557,6 +664,17 @@ class Task:
     def _input_unstable(self):
         """Mark this run as unstable, regardless of other inputs."""
         return None
+
+    def _input_unknown_input(self):
+        """An unknown input that may change after latexrun exits.
+
+        This conservatively marks some unknown input that definitely
+        won't change while latexrun is running, but may change before
+        the user next runs latexrun.  This allows the task to
+        stabilize during this invocation, but will cause the task to
+        re-run on the next invocation.
+        """
+        return start_time
 
 class RunResult(collections.namedtuple(
         'RunResult', 'output_filenames extra')):
@@ -613,14 +731,15 @@ class LaTeX(Task):
         try:
             os.makedirs(self.__obj_dir, exist_ok=True)
         except OSError as e:
-            raise TaskError('failed to create %s: ' % self.__obj_dir + str(e))
+            raise TaskError('failed to create %s: ' % self.__obj_dir + str(e)) \
+                from e
         try:
             verbose_cmd(args)
             p = subprocess.Popen(args,
                                  stdin=subprocess.DEVNULL,
                                  stdout=subprocess.PIPE,
                                  stderr=subprocess.STDOUT)
-            stdout, has_errors = self.__feed_terminal(p.stdout)
+            stdout, has_errors, missing_includes = self.__feed_terminal(p.stdout)
             status = p.wait()
         except OSError as e:
             raise TaskError('failed to execute latex task: ' + str(e)) from e
@@ -647,6 +766,15 @@ class LaTeX(Task):
         for path in inputs:
             self._input('file', path)
 
+        if missing_includes:
+            # Missing \includes are tricky.  Ideally we'd depend on
+            # the absence of some file, but in fact we'd have to
+            # depend on the failure of a whole kpathsea lookup.
+            # Rather than try to be clever, just mark this as an
+            # unknown input so we'll run at least once on the next
+            # invocation.
+            self._input('unknown_input')
+
         if not self.__create_outdirs(stdout) and has_errors:
             # LaTeX reported unrecoverable errors (other than output
             # directory errors, which we just fixed).  We could
@@ -657,6 +785,11 @@ class LaTeX(Task):
             # for the latter.
             global terminate_task_loop
             terminate_task_loop = True
+            # This error could depend on something we failed to track.
+            # It would be really confusing if we continued to report
+            # the error after the user fixed it, so be conservative
+            # and force a re-run next time.
+            self._input('unknown_input')
 
         return RunResult(outputs,
                          {'jobname': jobname, 'outname': outname,
@@ -691,7 +824,7 @@ class LaTeX(Task):
             # Were there unrecoverable errors?
             has_errors = any(msg.typ == 'error' for msg in filt.get_messages())
 
-            return ''.join(buf), has_errors
+            return ''.join(buf), has_errors, filt.has_missing_includes()
 
     def __parse_jobname(self, stdout):
         """Extract the job name and output name from latex's output.
@@ -797,12 +930,34 @@ class LaTeX(Task):
 
         # Parse the log
         logfile = open(extra['jobname'] + '.log', 'rt', errors='surrogateescape')
-        for msg in LaTeXFilter(self.__nowarns).feed(
-                logfile.read(), True).get_messages():
-            print(msg, file=sys.stderr)
+        for msg in self.__clean_messages(
+                LaTeXFilter(self.__nowarns).feed(
+                    logfile.read(), True).get_messages()):
+            msg.emit()
 
         # Return LaTeX's exit status
         return extra['status']
+
+    def __clean_messages(self, msgs):
+        """Make some standard log messages more user-friendly."""
+        have_undefined_reference = False
+        for msg in msgs:
+            if msg.msg == '==> Fatal error occurred, no output PDF file produced!':
+                msg = msg._replace(typ='info',
+                                   msg='Fatal error (no output file produced)')
+            if msg.msg.startswith('[LaTeX] '):
+                # Strip unnecessary package name
+                msg = msg._replace(msg=msg.msg.split(' ', 1)[1])
+            if re.match(r'Reference .* undefined', msg.msg):
+                have_undefined_reference = True
+            if have_undefined_reference and \
+               re.match(r'There were undefined references', msg.msg):
+                # LaTeX prints this at the end so the user knows it's
+                # worthwhile looking back at the log.  Since latexrun
+                # makes the earlier messages obvious, this is
+                # redundant.
+                continue
+            yield msg
 
     def get_tex_filename(self):
         return self.__tex_filename
@@ -831,20 +986,26 @@ class LaTeXCommit(Task):
                          normalize_input_path(latex_task.get_tex_filename()))
         self.__latex_task = latex_task
         self.__output_path = output_path
+        self.status = 'There were errors'
 
     def _input_latex(self):
         return self.__latex_task.get_status(), self.__latex_task.get_outname()
 
     def _execute(self):
+        self.status = 'There were errors'
+
         # If latex succeeded with output, atomically commit the output
         status, outname = self._input('latex')
         if status != 0 or outname is None:
             debug('not committing (status {}, outname {})', status, outname)
+            if outname is None:
+                self.status = 'No pages of output'
             return RunResult([], None)
 
         commit = self.__output_path or os.path.basename(outname)
         if os.path.abspath(commit) == os.path.abspath(outname):
             debug('skipping commit (outname is commit name)')
+            self.status = None
             return RunResult([], None)
 
         try:
@@ -858,8 +1019,9 @@ class LaTeXCommit(Task):
                 shutil.copy(outname, outname + '~')
                 os.rename(outname + '~', commit)
         except OSError as e:
-            raise TaskError('error committing latex output: {}'.format(e))
+            raise TaskError('error committing latex output: {}'.format(e)) from e
         self._input('file', outname)
+        self.status = None
         return RunResult([commit], None)
 
 class LaTeXFilter:
@@ -873,6 +1035,9 @@ class LaTeXFilter:
         self.__messages = []
         self.__first_file = None
         self.__fatal_error = False
+        self.__missing_includes = False
+        self.__pageno = 1
+        self.__restart_pageno = 1
 
         self.__suppress = {cls: 0 for cls in nowarns}
 
@@ -891,6 +1056,7 @@ class LaTeXFilter:
         self.__file_stack = self.__restart_file_stack.copy()
         self.__messages = self.__messages[:self.__restart_messages_len]
         self.__lstart = self.__lend = -1
+        self.__pageno = self.__restart_pageno
 
         # Parse forward
         while self.__pos < len(self.__data):
@@ -901,8 +1067,8 @@ class LaTeXFilter:
             msgs = ['%d %s warning%s' % (count, cls, "s" if count > 1 else "")
                     for cls, count in self.__suppress.items() if count]
             if msgs:
-                self.__message('warning', None,
-                               '%s not shown (use -W to show them)' %
+                self.__message('info', None,
+                               '%s not shown (use -Wall to show them)' %
                                ', '.join(msgs), filename=self.__first_file)
 
         if eof and len(self.__file_stack) and not self.__fatal_error:
@@ -925,6 +1091,10 @@ class LaTeXFilter:
 
         return self.__file_stack
 
+    def has_missing_includes(self):
+        """Return True if the log reported missing \\include files."""
+        return self.__missing_includes
+
     def __save_restart_point(self):
         """Save the current state as a known-good restart point.
 
@@ -933,6 +1103,7 @@ class LaTeXFilter:
         self.__restart_pos = self.__pos
         self.__restart_file_stack = self.__file_stack.copy()
         self.__restart_messages_len = len(self.__messages)
+        self.__restart_pageno = self.__pageno
 
     def __message(self, typ, lineno, msg, cls=None, filename=None):
         if cls is not None and cls in self.__suppress:
@@ -1024,12 +1195,7 @@ class LaTeXFilter:
                 self.__message('warning', None,
                                self.__simplify_message(
                                    self.__consume_line(unwrap=True).strip()))
-                return
-            if lookingatre('No pages of output\\.$', re.M):
-                # Inform the user, since it can be confusing that they
-                # don't get any output file at all
-                self.__consume_line()
-                self.__message('warning', None, 'No pages (no output produced)')
+                self.__missing_includes = True
                 return
             # Other things that are common and irrelevant
             if lookingatre(r'(Package|Class|LaTeX) (\w+ )?info: ', re.I):
@@ -1051,8 +1217,12 @@ class LaTeXFilter:
         # and various packages.  We'll assume at this point that all
         # parentheses belong to the file name stack or, if they're in
         # random other messages, they're at least balanced and nothing
-        # interesting happens between them.
-        m = re.compile('[(){}\n]').search(self.__data, self.__pos)
+        # interesting happens between them.  For page outs, ship_out
+        # prints a space if not at the beginning of a line, then a
+        # "[", then the page number being shipped out (this is
+        # usually, but not always, followed by "]").
+        m = re.compile(r'[(){}\n]|(?<=[\n ])\[\d+', re.M).\
+            search(self.__data, self.__pos)
         if m is None:
             self.__pos = len(self.__data)
             return
@@ -1063,6 +1233,10 @@ class LaTeXFilter:
             # parsing, since we definitely didn't match any of the
             # known message types above.
             self.__save_restart_point()
+        elif ch == '[':
+            # This is printed at the end of a page, so we're beginning
+            # page n+1.
+            self.__pageno = int(self.__lookingatre(r'\d+').group(0)) + 1
         elif ((self.__data.startswith('`', m.start() - 1) or
                self.__data.startswith('`\\', m.start() - 2)) and
                self.__data.startswith('\'', m.start() + 1)):
@@ -1168,6 +1342,8 @@ class LaTeXFilter:
             if found_context:
                 # Consume the second context line
                 post = self.__consume_line().rstrip('\n')
+                # Clean up goofy trailing ^^M TeX sometimes includes
+                post = re.sub(r'\^\^M$', '', post)
                 if post[:len(pre)].isspace() and not post.isspace():
                     stack.append(len(stack[-1]))
                     stack[-2] += post[len(pre):]
@@ -1221,7 +1397,11 @@ class LaTeXFilter:
         m = re.search(r' in (?:paragraph|alignment) at lines ([0-9]+)--([0-9]+)', msg) or \
             re.search(r' detected at line ([0-9]+)', msg)
         if m:
-            lineno = int(m.group(1))
+            # Sometimes TeX prints crazy line ranges like "at lines
+            # 8500--250".  The lower number seems roughly sane, so use
+            # that.  I'm not sure what causes this, but it may be
+            # related to shipout routines messing up line registers.
+            lineno = min(int(m.group(1)), int(m.groups()[-1]))
             msg = msg[:m.start()]
         else:
             m = re.search(r' while \\output is active', msg)
@@ -1242,7 +1422,7 @@ class LaTeXFilter:
             # name, which will start with a \.
             if 'hbox' in msg and self.__lookingat('\\'):
                 self.__consume_line(unwrap=True)
-        msg = self.__simplify_message(msg)
+        msg = self.__simplify_message(msg) + ' (page {})'.format(self.__pageno)
         cls = msg.split(None, 1)[0].lower()
         self.__message('warning', lineno, msg, cls=cls)
 
@@ -1482,7 +1662,7 @@ class BibTeX(Task):
         log = open(extra['outbase'] + '.blg', 'rt').read()
         inputs = extra['inputs']
         for msg in BibTeXFilter(log, inputs).get_messages():
-            print(msg, file=sys.stderr)
+            msg.emit()
 
         # BibTeX exits with 1 if there are warnings, 2 if there are
         # errors, and 3 if there are fatal errors (sysdep.h).
@@ -1540,7 +1720,12 @@ class BibTeXFilter:
         # bib_one_of_two_expected_err/macro_name_warning/
         if match('(.*?)---?line ([0-9]+) of file (.*)'):
             # Sometimes the real error is printed on the previous line
-            typ, msg = self.__canonicalize(m.group(1) or prev_line)
+            if m.group(1) == 'while executing':
+                # bst_ex_warn.  The real message is on the previous line
+                text = prev_line
+            else:
+                text = m.group(1) or prev_line
+            typ, msg = self.__canonicalize(text)
             return (typ, m.group(3), int(m.group(2)), msg)
 
         # overflow/print_overflow
