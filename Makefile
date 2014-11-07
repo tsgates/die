@@ -4,9 +4,10 @@ CODE := $(addsuffix .tex,$(filter-out %.tex,$(wildcard code/*)))
 FIGS := $(patsubst %.svg,%.pdf,$(wildcard fig/*.svg))
 PLOT := $(patsubst %.gp,%.tex,$(wildcard data/*.gp))
 DEPS := rev.tex code/fmt.tex abstract.txt $(CODE) $(FIGS) $(PLOT)
+BTEX := --bibtex-args="-min-crossrefs=99"
 
 all: $(DEPS)
-	@TEXINPUTS="sty:" bin/latexrun $(MAIN)
+	@TEXINPUTS="sty:" bin/latexrun $(BTEX) $(MAIN)
 
 submit: $(DEPS)
 	@for f in $(wildcard submit-*.tex); do \
