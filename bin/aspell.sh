@@ -1,7 +1,7 @@
 #!/bin/bash
 
-DIC=$1
-TEX=$2
+DIC=$(dirname "$0")/../aspell.words
+TEX=$1
 
 # p: skip a param
 # P: don't skip a param
