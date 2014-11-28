@@ -39,7 +39,7 @@ data/%.tex: data/%.gp
 
 draft: $(DEPS)
 	echo -e '\\newcommand*{\\DRAFT}{}' >> rev.tex
-	@bin/build.sh $(MAIN)
+	@TEXINPUTS="sty:" bin/latexrun $(BTEX) $(MAIN)
 
 spell:
 	@for i in *.tex fig/*.tex; do bin/aspell.sh $$i; done
