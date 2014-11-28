@@ -2,6 +2,12 @@ die: a paper template
 =====================
 
 ## start
+0. Prerequisites
+  - Python 3.x
+
+  - pygmentize
+
+    $ pip install Pygments 
 
 1. clone the git repo:
 
@@ -11,7 +17,7 @@ die: a paper template
 
   - if you have a git-repo to work on,
 
-    $ git subtree add --squash git@github.com:tsgates/die.git -P paper
+    $ git subtree add --squash git@github.com:tsgates/die.git master -P paper
 
 2. build it:
 
