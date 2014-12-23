@@ -1,0 +1,113 @@
+%% www-section: category
+%% www-git    : code url
+%% www-url    : proj webpage
+
+@string{sec-auditing = "Auditing"}
+@string{sec-recovery = "Recovery"}
+@string{sec-system   = "System Security"}
+@string{sec-sandbox  = "Sandbox"}
+@string{sec-testing  = "Testing"}
+
+%% 2015
+@InProceedings{lee:dangnull,
+  title         = {Preventing Use-after-free with Dangling Pointers Nullification},
+  author        = {Byoungyoung Lee and Chengyu Song and Yeongjin Jang and Tielei Wang and Taesoo Kim and Long Lu and Wenke Lee},
+  crossref      = {NDSS15},
+  www-section   = sec-system,
+}
+
+%% 2014
+@InProceedings{lee:morula,
+  title         = {{From Zygote to Morula}: Fortifying weakened {ASLR} on {Android}},
+  author        = {Byoungyoung Lee and Long Lu and Tielei Wang and Taesoo Kim and Wenke Lee},
+  crossref      = {SP14},
+  www-section   = sec-system,
+  www-url       = "https://github.com/lifeasageek/morula",
+  www-git       = "https://github.com/lifeasageek/morula",
+}
+
+@inproceedings{chen:rail,
+  title         = {Identifying information disclosure in web applications with retroactive auditing},
+  author        = {Haogang Chen and Taesoo Kim and Xi Wang and Nickolai Zeldovich and M. Frans Kaashoek},
+  crossref      = {OSDI14},
+  www-section   = sec-auditing,
+  www-url       = "https://github.com/haogang/rail",
+}
+
+%% 2013
+@inproceedings{chandra:aire,
+  title         = {Asynchronous Intrusion Recovery for Interconnected Web Services},
+  author        = {Ramesh Chandra and Taesoo Kim and Nickolai Zeldovich},
+  crossref      = {SOSP13},
+  www-section   = sec-auditing,
+}
+
+@inproceedings{chen:vmsec,
+  title         = {Security Bugs in Embedded Interpreters},
+  author        = {Haogang Chen and Cody Cutler and Taesoo Kim and Yandong Mao and Xi Wang and Nickolai Zeldovich and M. Frans Kaashoek},
+  crossref      = {APSYS13},
+  www-section   = sec-system,
+}
+
+@inproceedings{kim:tao,
+  title         = {Optimizing Unit Test Execution in Large Software Programs using Dependency Analysis},
+  author        = {Taesoo Kim and Ramesh Chandra and Nickolai Zeldovich},
+  crossref      = {APSYS13},
+  www-section   = sec-testing,
+}
+
+@inproceedings{kim:mbox,
+  title         = {Practical and Effective Sandboxing for Non-root Users},
+  author        = {Taesoo Kim and Nickolai Zeldovich},
+  crossref      = {ATC13},
+  www-section   = sec-sandbox,
+  www-url       = "http://pdos.csail.mit.edu/mbox"
+}
+
+% 2012
+@inproceedings{kim:poirot,
+  title         = {Efficient Patch-based Auditing for Web Application Vulnerabilities},
+  author        = {Taesoo Kim and Ramesh Chandra and Nickolai Zeldovich},
+  crossref      = {OSDI12},
+  www-section   = sec-auditing,
+  www-url       = "http://css.csail.mit.edu/undo",  
+}
+
+@inproceedings{kim:dare,
+  title         = {Recovering from Intrusions in Distributed Systems with {Dare}},
+  author        = {Taesoo Kim and Ramesh Chandra and Nickolai Zeldovich},
+  crossref      = {APSYS12},
+  www-section   = sec-recovery,
+}
+
+@inproceedings{kim:stealthmem,
+  title         = {{StealthMem}: System-Level Protection Against Cache-based Side Channel Attacks in the Cloud},
+  author        = {Taesoo Kim and Marcus Peinado and Gloria Mainar-Ruiz},
+  crossref      = {SEC12},
+  www-section   = sec-system,
+}
+
+% 2011
+@inproceedings{chandra:warp,
+  title         = {Intrusion Recovery for Database-backed Web Applications},
+  author        = {Ramesh Chandra and Taesoo Kim and Meelap Shah and Neha Narula and Nickolai Zeldovich},
+  crossref      = {SOSP11},
+  www-section   = sec-auditing,
+  www-url       = "http://css.csail.mit.edu/undo",
+}
+
+% 2010
+@inproceedings{kim:retro,
+  title         = {Intrusion recovery using selective re-execution},
+  author        = {Taesoo Kim and Xi Wang and Nickolai Zeldovich and M. Frans Kaashoek},
+  crossref      = {OSDI10},
+  www-section   = sec-recovery,
+  www-url       = "http://css.csail.mit.edu/undo",
+}
+
+@inproceedings{kim:userfs,
+  title         = {Making {Linux} Protection Mechanisms Egalitarian with {UserFS}},
+  author        = {Taesoo Kim and Nickolai Zeldovich},
+  crossref      = {SEC10},
+  www-section   = sec-system,
+}
