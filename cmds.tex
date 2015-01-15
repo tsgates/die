@@ -98,3 +98,8 @@
 \begin{tikzpicture}[baseline=(C.base)]
 \node[draw,circle,inner sep=0.2pt](C) {#1};
 \end{tikzpicture}}
+
+\newcommand*\BC[1]{%
+\begin{tikzpicture}[baseline=(C.base)]
+\node[draw,circle,fill=black,inner sep=0.2pt](C) {\textcolor{white}{#1}};
+\end{tikzpicture}}
