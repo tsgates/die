@@ -41,6 +41,10 @@ draft: $(DEPS)
 	echo -e '\\newcommand*{\\DRAFT}{}' >> rev.tex
 	@TEXINPUTS="sty:" bin/latexrun $(BTEX) $(MAIN)
 
+watermark: $(DEPS)
+	echo -e '\\usepackage[firstpage]{draftwatermark}' >> rev.tex
+	@TEXINPUTS="sty:" bin/latexrun $(BTEX) $(MAIN)
+
 spell:
 	@for i in *.tex fig/*.tex; do bin/aspell.sh $$i; done
 	@for i in *.tex; do bin/double.pl $$i; done
