@@ -62,16 +62,7 @@ init:
 	rm -f {code,fig,data}/ex-*
 	perl -pi -e 's/^\\input{ex}/% \\input{ex}/g' $(MAIN).tex
 
-SYS := $(shell sed -n -e 's/\\newcommand{\\sys}{\\mbox{\\textsc{\([^}]*\)}.*/\1/p' $(MAIN).tex)
-abstract.txt: abstract.tex
-	@cat $<                         \
-	    | grep -v '{abstract}'      \
-	    | sed -e 's/\\emph//g'      \
-	    | sed -e 's/{//g'           \
-	    | sed -e 's/}//g'           \
-	    | sed -e 's/---/ -- /g'     \
-	    | sed -e 's/~/ /g'          \
-	    | sed -e 's/\\sys/${SYS}/g' \
-	    | fmt -w72 > $@
+abstract.txt: abstract.tex $(MAIN).tex
+	@bin/mkabstract $(MAIN).tex $< > $@
 
 .PHONY: all help FORCE draft clean spell distclean init

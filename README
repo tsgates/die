@@ -62,6 +62,7 @@ die: a paper template
 1. make a draft for revision
 
     $ make draft
+    $ make watermark
 
 2. abstract.txt (from abstract.tex)
 

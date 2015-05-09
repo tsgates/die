@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+
+import os
+import sys
+import re
+import textwrap
+
+if len(sys.argv) != 3:
+    print("[usage] %s [p.tex] [abstract.tex]" % sys.argv[0])
+    exit(0)
+
+pn_main = sys.argv[1]
+pn_abst = sys.argv[2]
+
+def get_sys(tex):
+    tok = re.findall(r"\\newcommand{\\sys}{\\mbox{\\textsc{([^}]*)}", tex)
+    if len(tok) == 0:
+        print("Failed to find 'sys'")
+        exit(1)
+    return tok[0]
+
+SYS = get_sys(open(pn_main).read())
+
+abstract = []
+for l in open(pn_abst):
+    l = l.strip()
+    if l.startswith("%"):
+        continue
+    if "{abstract}" in l:
+        continue
+    l = l.replace("{", "")
+    l = l.replace("}", "")
+    l = l.replace("~", " ")
+    l = l.replace("---", " -- ")
+    l = l.replace("\\sys", SYS)
+    
+    if "\\" in l:
+        print("WARN: unresolved char in")
+        print(" > %s" % l)
+        exit(1)
+
+    abstract.append(l)
+
+abstract = "\n".join(abstract)
+print("\n".join(textwrap.wrap(abstract)))
