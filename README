@@ -45,9 +45,10 @@ die: a paper template
   - hdr: includes title/author info
   - ex : includes latex examples
 
-4. clean-slate template
+4. example latex
 
-    $ make init
+    $ git checkout example
+    $ make
 
 5. formatting rules (dependencies)
 
