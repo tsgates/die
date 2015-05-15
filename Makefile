@@ -50,6 +50,7 @@ spell:
 	@for i in *.tex; do bin/double.pl $$i; done
 	@for i in *.tex; do bin/abbrv.pl  $$i; done
 	@bin/hyphens.sh *.tex
+	@pdftotext $(MAIN).pdf /dev/stdout | grep '??'
 
 clean:
 	@bin/latexrun --clean

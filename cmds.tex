@@ -105,9 +105,10 @@
 \end{tikzpicture}
 }
 
+\usepackage{xstring}
 \newcommand{\PP}[1]{
 \vspace{2px}
-\noindent{\bf #1}
+\noindent{\bf \IfEndWith{#1}{.}{#1}{#1.}}
 }
 
 \newcommand{\V}{\checkmark}
