@@ -28,6 +28,8 @@ for l in open(pn_abst):
         continue
     if "{abstract}" in l:
         continue
+    l = l.replace("\\%", "%")
+    l = l.replace("\\emph{", "")
     l = l.replace("{", "")
     l = l.replace("}", "")
     l = l.replace("~", " ")
@@ -41,5 +43,4 @@ for l in open(pn_abst):
 
     abstract.append(l)
 
-abstract = "\n".join(abstract)
-print("\n".join(textwrap.wrap(abstract)))
+print("\n".join(abstract))

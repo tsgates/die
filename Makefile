@@ -64,6 +64,6 @@ init:
 	perl -pi -e 's/^\\input{ex}/% \\input{ex}/g' $(MAIN).tex
 
 abstract.txt: abstract.tex $(MAIN).tex
-	@bin/mkabstract $(MAIN).tex $< > $@
+	@bin/mkabstract $(MAIN).tex $< | fmt -w72 > $@
 
 .PHONY: all help FORCE draft clean spell distclean init
