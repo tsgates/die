@@ -1,20 +1,22 @@
-#!/bin/bash
+#!/bin/bash -x
 
-HERE=$(pwd)
+ROOT=$(git rev-parse --show-toplevel)
 TMPD=$(mktemp -d /tmp/latexdiff.XXXXXXXXXX)
-NEWD=$(pwd)
-OLDD=$TMPD/old
+HERE=$(realpath --relative-to=$ROOT $(pwd))
 
-if [[ ! -e $HERE/.git ]]; then
-  echo "please run on git repo"
-  exit 1
-fi
+mkdir -p $TMPD
 
-git clone $NEWD $OLDD
+OLD_REPO=$TMPD/old
 
-cd $OLDD
+git clone $ROOT $OLD_REPO
+
+cd $OLD_REPO
 git checkout $1
 
+NEWD=$ROOT/$HERE
+OLDD=$OLD_REPO/$HERE
+
+cd $OLDD
 make
 latexdiff --flatten p.tex $NEWD/p.tex > diff.tex
 
