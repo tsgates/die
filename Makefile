@@ -5,6 +5,7 @@ FIGS := $(patsubst %.svg,%.pdf,$(wildcard fig/*.svg))
 PLOT := $(patsubst %.gp,%.tex,$(wildcard data/*.gp))
 DEPS := rev.tex code/fmt.tex abstract.txt $(CODE) $(FIGS) $(PLOT)
 BTEX := --bibtex-args="-min-crossrefs=99"
+SHELL:= $(shell echo $$SHELL)
 
 all: $(DEPS)
 	@TEXINPUTS="sty:" bin/latexrun $(BTEX) $(MAIN)
