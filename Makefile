@@ -27,7 +27,7 @@ rev.tex: FORCE
 	   "$(shell git log -1 --format='%ci' HEAD)" > $@
 
 code/%.tex: code/%
-	pygmentize -P tabsize=4 -P mathescape -f latex $^ > $@
+	pygmentize -P tabsize=4 -P mathescape -f latex $^ | mark.py > $@
 
 code/fmt.tex:
 	pygmentize -f latex -S default > $@
