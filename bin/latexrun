@@ -22,6 +22,7 @@
 
 import sys
 import os
+import errno
 import argparse
 import shlex
 import json
@@ -35,6 +36,12 @@ import filecmp
 import io
 import traceback
 import time
+
+try:
+    import fcntl
+except ImportError:
+    # Non-UNIX platform
+    fcntl = None
 
 def debug(string, *args):
     if debug.enabled:
@@ -157,7 +164,7 @@ def main():
                            args.obj_dir, args.nowarns)
         task_commit = LaTeXCommit(db, task_latex, args.output)
         task_bibtex = BibTeX(db, task_latex, args.bibtex_cmd, args.bibtex_args,
-                             args.nowarns)
+                             args.nowarns, args.obj_dir)
         tasks = [task_latex, task_commit, task_bibtex]
         stable = run_tasks(tasks, args.max_iterations)
 
@@ -221,6 +228,14 @@ def verbose_cmd(args, cwd=None, env=None):
         print(cmd, file=sys.stderr)
 verbose_cmd.enabled = False
 
+def mkdir_p(path):
+    try:
+        os.makedirs(path)
+    except OSError as exc:
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else: raise
+
 class DB:
     """A latexrun control database."""
 
@@ -228,6 +243,19 @@ class DB:
 
     def __init__(self, filename):
         self.__filename = filename
+
+        # Make sure database directory exists
+        if os.path.dirname(self.__filename):
+            os.makedirs(os.path.dirname(self.__filename), exist_ok=True)
+
+        # Lock the database if possible. We don't release this lock
+        # until the process exits.
+        lockpath = self.__filename + '.lock'
+        if fcntl is not None:
+            lockfd = os.open(lockpath, os.O_CREAT|os.O_WRONLY|os.O_CLOEXEC, 0o666)
+            # Note that this is actually an fcntl lock, not a lockf
+            # lock. Don't be fooled.
+            fcntl.lockf(lockfd, fcntl.LOCK_EX, 1)
 
         try:
             fp = open(filename, 'r')
@@ -245,9 +273,6 @@ class DB:
 
     def commit(self):
         debug('committing database')
-        # Make sure database directory exists
-        if os.path.dirname(self.__filename):
-            os.makedirs(os.path.dirname(self.__filename), exist_ok=True)
         # Atomically commit database
         tmp_filename = self.__filename + '.tmp'
         with open(tmp_filename, 'w') as fp:
@@ -836,15 +861,15 @@ class LaTeX(Task):
         pages of output.
         """
         jobname = outname = None
-        for m in re.finditer(r'^Transcript written on (.*)\.log\.$', stdout,
-                             re.MULTILINE):
-            jobname = m.group(1)
+        for m in re.finditer(r'^Transcript written on "?(.*)\.log"?\.$', stdout,
+                             re.MULTILINE | re.DOTALL):
+            jobname = m.group(1).replace('\n', '')
         if jobname is None:
             print(stdout, file=sys.stderr)
             raise TaskError('failed to extract job name from latex log')
-        for m in re.finditer(r'^Output written on (.*\.[^ .]+) \([0-9]+ page',
-                             stdout, re.MULTILINE):
-            outname = m.group(1)
+        for m in re.finditer(r'^Output written on "?(.*\.[^ ."]+)"? \([0-9]+ page',
+                             stdout, re.MULTILINE | re.DOTALL):
+            outname = m.group(1).replace('\n', '')
         if outname is None and not \
            re.search(r'^No pages of output\.$|^! Emergency stop\.$'
                      r'|^!  ==> Fatal error occurred, no output PDF file produced!$',
@@ -916,7 +941,7 @@ class LaTeX(Task):
             if os.path.isdir(subdir) and not os.path.isdir(newdir):
                 debug('creating output subdirectory {}'.format(newdir))
                 try:
-                    os.mkdir(newdir)
+                    mkdir_p(newdir)
                 except OSError as e:
                     raise TaskError('failed to create output subdirectory: ' +
                                     str(e)) from e
@@ -1462,12 +1487,13 @@ class LaTeXFilter:
 #
 
 class BibTeX(Task):
-    def __init__(self, db, latex_task, cmd, cmd_args, nowarns):
+    def __init__(self, db, latex_task, cmd, cmd_args, nowarns, obj_dir):
         super().__init__(db, 'bibtex::' + normalize_input_path(
             latex_task.get_tex_filename()))
         self.__latex_task = latex_task
         self.__cmd = cmd
         self.__cmd_args = cmd_args
+        self.__obj_dir = obj_dir
 
     def stable(self):
         # If bibtex doesn't have its inputs, then it's stable because
@@ -1503,6 +1529,10 @@ class BibTeX(Task):
            re.search(r'^\\bibdata\{',  aux_data, flags=re.M):
             return True
 
+        if re.search(r'^\\abx@aux@cite\{', aux_data, flags=re.M):
+            # biber citation
+            return True
+
         # Recurse into included aux files (see aux_input_command), in
         # case \bibliography appears in an \included file.
         for m in re.finditer(r'^\\@input\{([^}]*)\}', aux_data, flags=re.M):
@@ -1513,7 +1543,10 @@ class BibTeX(Task):
         return False
 
     def _input_args(self):
-        aux_name = os.path.basename(self.__latex_task.get_jobname()) + '.aux'
+        if self.__is_biber():
+            aux_name = os.path.basename(self.__latex_task.get_jobname())
+        else:
+            aux_name = os.path.basename(self.__latex_task.get_jobname()) + '.aux'
         return [self.__cmd] + self.__cmd_args + [aux_name]
 
     def _input_cwd(self):
@@ -1530,7 +1563,8 @@ class BibTeX(Task):
                 h = hashlib.sha256()
                 for line in aux:
                     if line.startswith((b'\\citation{', b'\\bibdata{',
-                                        b'\\bibstyle{', b'\\@input{')):
+                                        b'\\bibstyle{', b'\\@input{',
+                                        b'\\abx@aux@cite{')):
                         h.update(line)
                 return h.hexdigest()
         except FileNotFoundError:
@@ -1542,6 +1576,9 @@ class BibTeX(Task):
             # Append ':' to keep the default search path
             return first + ':'
         return first + ':' + rest
+
+    def __is_biber(self):
+        return "biber" in self.__cmd
 
     def _execute(self):
         # This gets complicated when \include is involved.  \include
@@ -1574,7 +1611,7 @@ class BibTeX(Task):
         except OSError as e:
             raise TaskError('failed to execute bibtex task: ' + str(e)) from e
 
-        inputs, auxnames = self.__parse_inputs(stdout, cwd, env)
+        inputs, auxnames, outbase = self.__parse_inputs(stdout, cwd, env)
         if not inputs and not auxnames:
             # BibTeX failed catastrophically.
             print(stdout, file=sys.stderr)
@@ -1590,7 +1627,8 @@ class BibTeX(Task):
         for path in inputs:
             self._input('file', path)
 
-        outbase = auxnames[0][:-4]
+        if self.__is_biber():
+            outbase = os.path.join(cwd, outbase)
         outputs = [outbase + '.bbl', outbase + '.blg']
         return RunResult(outputs, {'outbase': outbase, 'status': status,
                                    'inputs': inputs})
@@ -1626,6 +1664,7 @@ class BibTeX(Task):
         kpathsea = Kpathsea('bibtex')
         inputs = []
         auxnames = []
+        outbase = None
         for line in log.splitlines():
             m = re.match('(?:The top-level auxiliary file:'
                          '|A level-[0-9]+ auxiliary file:) (.*)', line)
@@ -1651,7 +1690,21 @@ class BibTeX(Task):
 
                 inputs.append(filename)
 
-        return inputs, auxnames
+            # biber output
+            m = re.search("Found BibTeX data source '(.*?)'",
+                         line)
+            if m:
+                filename = m.group(1)
+                inputs.append(filename)
+
+            m = re.search("Logfile is '(.*?)'", line)
+            if m:
+                outbase = m.group(1)[:-4]
+
+        if outbase is None:
+            outbase = auxnames[0][:-4]
+
+        return inputs, auxnames, outbase
 
     def report(self):
         extra = self._get_result_extra()
@@ -1769,6 +1822,21 @@ class BibTeXFilter:
         # @<Clean up and leave@>
         if match('Aborted at line ([0-9]+) of file (.*)'):
             return ('info', m.group(2), int(m.group(1)), 'aborted')
+
+        # biber type errors
+        if match('^.*> WARN - (.*)$'):
+            print ('warning', None, None, m.group(1))
+            m2 = re.match("(.*) in file '(.*?)', skipping ...", m.group(1))
+            if m2:
+                return ('warning', m2.group(2), "0", m2.group(1))
+            return ('warning', None, None, m.group(1))
+
+        if match('^.*> ERROR - (.*)$'):
+            m2 = re.match("BibTeX subsystem: (.*?), line (\d+), (.*)$", m.group(1))
+            if m2:
+                return ('error', m2.group(1), m2.group(2), m2.group(3))
+            return ('error', None, None, m.group(1))
+
 
     def __canonicalize(self, msg):
         if msg.startswith('Warning'):
