@@ -7,64 +7,65 @@ DEPS := rev.tex code/fmt.tex abstract.txt $(CODE) $(FIGS) $(PLOT)
 BTEX := --bibtex-args="-min-crossrefs=99"
 SHELL:= $(shell echo $$SHELL)
 
-all: $(DEPS)
+all: $(DEPS) ## generate a pdf
 	@TEXINPUTS="sty:" bin/latexrun $(BTEX) $(MAIN)
 
-submit: $(DEPS)
+submit: $(DEPS) ## proposal function
 	@for f in $(wildcard submit-*.tex); do \
 		TEXINPUTS="sty:" bin/latexrun $$f; \
 	done
 
-diff: $(DEPS)
+diff: $(DEPS) ## generate diff-highlighed pdf
 	@bin/diff.sh $(DIFF)
 
-help:
-	echo "..."
+help: ## print help
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
+	  | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-10s\033[0m %s\n", $$1, $$2}'
 
 rev.tex: FORCE
 	@printf '\\gdef\\therev{%s}\n\\gdef\\thedate{%s}\n' \
 	   "$(shell git rev-parse --short HEAD)"            \
 	   "$(shell git log -1 --format='%ci' HEAD)" > $@
 
-code/%.tex: code/%
+code/%.tex: code/% ## build highlighted tex code from source code
 	pygmentize -P tabsize=4 -P mathescape -f latex $^ | mark.py > $@
 
-code/fmt.tex:
+code/fmt.tex: ## generate color table
 	pygmentize -f latex -S default > $@
 
-fig/%.pdf: fig/%.svg
+fig/%.pdf: fig/%.svg ## generate pdf from svg
 	inkscape --without-gui -f $^ -D -A $@
 
-data/%.tex: data/%.gp
+data/%.tex: data/%.gp ## generate plot
 	gnuplot $^
 
-draft: $(DEPS)
+draft: $(DEPS) ## generate pdf with a draft info
 	echo -e '\\newcommand*{\\DRAFT}{}' >> rev.tex
 	@TEXINPUTS="sty:" bin/latexrun $(BTEX) $(MAIN)
 
-watermark: $(DEPS)
+watermark: $(DEPS) ## generate pdf with a watermark
 	echo -e '\\usepackage[firstpage]{draftwatermark}' >> rev.tex
 	@TEXINPUTS="sty:" bin/latexrun $(BTEX) $(MAIN)
 
-spell:
+spell: ## run a spell check
 	@for i in *.tex fig/*.tex; do bin/aspell.sh $$i; done
 	@for i in *.tex; do bin/double.pl $$i; done
 	@for i in *.tex; do bin/abbrv.pl  $$i; done
 	@bin/hyphens.sh *.tex
 	@pdftotext $(MAIN).pdf /dev/stdout | grep '??'
 
-clean:
+clean: ## clean up
 	@bin/latexrun --clean
 	rm -f abstract.txt
 
-distclean: clean
+distclean: clean ## clean up completely
 	rm -f code/*.tex
 
-init:
+init: ## init writing (discarding example)
 	rm -f {code,fig,data}/ex-*
 	perl -pi -e 's/^\\input{ex}/% \\input{ex}/g' $(MAIN).tex
 
-abstract.txt: abstract.tex $(MAIN).tex
+abstract.txt: abstract.tex $(MAIN).tex ## generate abstract.txt
 	@bin/mkabstract $(MAIN).tex $< | fmt -w72 > $@
 
 .PHONY: all help FORCE draft clean spell distclean init
