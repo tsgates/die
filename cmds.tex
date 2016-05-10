@@ -37,6 +37,7 @@
 % sema
 \newcommand{\shl}{\ \cc{<}\cc{<}\ }
 \newcommand{\shr}{\ \cc{>}\cc{>}\ }
+\newcommand{\x}{$\times$\xspace}
 
 \if 0
 \renewcommand{\topfraction}{0.9}
@@ -54,11 +55,6 @@
 \newif\ifdraft\drafttrue
 \newif\ifnotes\notestrue
 \ifdraft\else\notesfalse\fi
-
-% ref. http://en.wikibooks.org/wiki/LaTeX/Colors
-\newcommand{\TK}[1]{\textcolor{LimeGreen}{TK: #1}}
-\newcommand{\XXX}[1]{\textcolor{red}{XXX: #1}}
-\newcommand{\TODO}[1]{\textcolor{Melon}{TODO: #1}}
 
 % hide comments
 % \renewcommand{\TK}[1]{\ignorespaces}
@@ -111,4 +107,26 @@
 \noindent{\bf \IfEndWith{#1}{.}{#1}{#1.}}
 }
 
+\newcommand{\ra}[1]{\renewcommand{\arraystretch}{#1}}
 \newcommand{\V}{\checkmark}
+\newcommand{\X}{{\footnotesize $\times$}\xspace}
+\renewcommand{\O}{\phantom{0}}
+
+%% units
+\newcommand{\B}{\,\text{B}\xspace}
+\newcommand{\K}{\,\text{K}\xspace}
+\newcommand{\M}{\,\text{M}\xspace}
+\newcommand{\T}{\,\text{T}\xspace}
+\newcommand{\KB}{\,\text{KB}\xspace}
+\newcommand{\MB}{\,\text{MB}\xspace}
+\newcommand{\GB}{\,\text{GB}\xspace}
+\newcommand{\TB}{\,\text{TB}\xspace}
+
+\newcommand{\Bs}{\,\text{B/s}\xspace}
+\newcommand{\KBs}{\,\text{KB/s}\xspace}
+\newcommand{\MBs}{\,\text{MB/s}\xspace}
+\newcommand{\GBs}{\,\text{GB/s}\xspace}
+
+\newcommand{\etal}{\textit{et al}.}
+\newcommand{\ie}{\textit{i}.\textit{e}.}
+\newcommand{\eg}{\textit{e}.\textit{g}.}
