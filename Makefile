@@ -2,8 +2,9 @@ MAIN ?= p
 DIFF ?= HEAD^
 CODE := $(addsuffix .tex,$(filter-out %.tex,$(wildcard code/*)))
 FIGS := $(patsubst %.svg,%.pdf,$(wildcard fig/*.svg))
+ODGS := $(patsubst %.odg,%.pdf,$(wildcard fig/*.odg))
 PLOT := $(patsubst %.gp,%.tex,$(wildcard data/*.gp))
-DEPS := rev.tex code/fmt.tex abstract.txt $(CODE) $(FIGS) $(PLOT)
+DEPS := rev.tex code/fmt.tex abstract.txt $(CODE) $(FIGS) $(ODGS) $(PLOT)
 LTEX := --latex-args="-shell-escape"
 BTEX := --bibtex-args="-min-crossrefs=99"
 SHELL:= $(shell echo $$SHELL)
@@ -36,6 +37,10 @@ code/fmt.tex: ## generate color table
 
 fig/%.pdf: fig/%.svg ## generate pdf from svg
 	inkscape --without-gui -f $^ -D -A $@
+
+fig/%.pdf: fig/%.odg ## generate pdf from LibreOffice Draw
+	soffice --convert-to pdf $< --outdir $(@D)
+	pdfcrop $@ $@
 
 data/%.tex: data/%.gp ## generate plot
 	gnuplot $^
