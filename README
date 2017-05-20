@@ -20,6 +20,10 @@ die: a paper template
 
     $ git subtree add --squash git@github.com:tsgates/die.git master -P paper
 
+  - or
+
+    $ wget https://github.com/tsgates/die/releases/download/latest/die.tar.gz
+
 2. build it:
 
     $ make
