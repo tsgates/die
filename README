@@ -2,9 +2,9 @@ die: a paper template
 =====================
 
 ## start
+
 0. Prerequisites
   - Python 3.x
-
   - pygmentize
 
     $ pip install Pygments 
@@ -77,3 +77,8 @@ die: a paper template
 
     $ make spell
 
+## Acknowledgment
+
+This template contains a few files copied/stolen from the Internet and
+mainly from my past collaborators (e.g., sty/*, conf.bib, some bin/),
+which I couldn't keep track of their licenses.
