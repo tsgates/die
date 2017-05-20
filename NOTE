@@ -1,5 +1,6 @@
 * TODO
 
+- more maintained sty files
 - modern visualization/data processing/plotting than gnuplot (ideally,
   python lib that supports pdf)
   

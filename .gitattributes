@@ -3,4 +3,5 @@
 /code/ex-* export-ignore
 /data/ex-* export-ignore
 /NOTE export-ignore
+/.gitattributes export-ignore
 /release.sh export-ignore
