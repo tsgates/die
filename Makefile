@@ -67,10 +67,6 @@ clean: ## clean up
 distclean: clean ## clean up completely
 	rm -f code/*.tex
 
-init: ## init writing (discarding example)
-	rm -f {code,fig,data}/ex-*
-	perl -pi -e 's/^\\input{ex}/% \\input{ex}/g' $(MAIN).tex
-
 abstract.txt: abstract.tex $(MAIN).tex ## generate abstract.txt
 	@bin/mkabstract $(MAIN).tex $< | fmt -w72 > $@
 

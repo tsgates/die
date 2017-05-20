@@ -1,0 +1,6 @@
+/refs export-ignore
+/fig/ex-* export-ignore
+/code/ex-* export-ignore
+/data/ex-* export-ignore
+/NOTE export-ignore
+/release.sh export-ignore

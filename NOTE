@@ -9,7 +9,8 @@
   - no proper/architecture-neutral pdf support
   - NO matplotlib; its model/code is too ugly
 
-- make release -> tar (rather than init)
+- release: rather than init
+- example in this main repo (as an example and for studying)
 - summarize pointers for latex beginner (e.g., explaining common issues)
   - e.g., ~ use 
 - summarize dependencies for mac/windows
