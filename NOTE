@@ -1,0 +1,18 @@
+* TODO
+
+- modern visualization/data processing/plotting than gnuplot (ideally,
+  python lib that supports pdf)
+  
+  - option: d3.js + chrome headless support to svg/pdf
+  - check: python seaborn/bokeh/ggplot/pygal/plotly/geoplotlib/gleam
+    (ref. https://blog.modeanalytics.com/python-data-visualization-libraries/)
+  - no proper/architecture-neutral pdf support
+  - NO matplotlib; its model/code is too ugly
+
+- make release -> tar (rather than init)
+- summarize pointers for latex beginner (e.g., explaining common issues)
+  - e.g., ~ use 
+- summarize dependencies for mac/windows
+- better code highlighting (+ ref support)
+- spell check on svg
+
