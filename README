@@ -4,6 +4,7 @@ die: a paper template
 ## start
 
 0. Prerequisites
+
   - Python 3.x
   - pygmentize
 
