@@ -65,6 +65,7 @@ watermark: $(DEPS) ## generate pdf with a watermark
 
 spell: ## run a spell check
 	@for i in *.tex fig/*.tex; do bin/aspell.sh $$i; done
+	@for i in fig/*.svg; do bin/aspell-sgml.sh $$i; done
 	@for i in *.tex; do bin/double.pl $$i; done
 	@for i in *.tex; do bin/abbrv.pl  $$i; done
 	@bin/hyphens.sh *.tex
