@@ -64,13 +64,13 @@ watermark: $(DEPS) ## generate pdf with a watermark
 	@TEXINPUTS="sty:" bin/latexrun $(BTEX) $(MAIN)
 
 spell: ## run a spell check
-	@for i in *.tex fig/*.tex; do bin/aspell.sh $$i; done
+	@for i in *.tex fig/*.tex; do bin/aspell.sh tex $$i; done
 	@for i in *.tex; do bin/double.pl $$i; done
 	@for i in *.tex; do bin/abbrv.pl  $$i; done
 	@bin/hyphens.sh *.tex
 	@pdftotext $(MAIN).pdf /dev/stdout | grep '??'
-	@for i in fig/*.svg; do bin/aspell-sgml.sh $$i; done
-	@for i in code/*.c; do bin/aspell-ccpp.sh $$i; done
+	@for i in fig/*.svg; do bin/aspell.sh svg $$i; done
+	@for i in code/*.c; do bin/aspell.sh code $$i; done
 
 clean: ## clean up
 	@bin/latexrun --clean

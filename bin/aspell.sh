@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DIC=$(dirname "$0")/../aspell.words
-TEX=$1
+FILE=$2
 
 # p: skip a param
 # P: don't skip a param
@@ -32,7 +32,16 @@ TEXCMD=(--add-tex-command="autoref p"
         --add-tex-command='includefig pp')
 
 touch $DIC
-aspell --lang en -x --mode=tex "${TEXCMD[@]}" -p $(pwd)/$DIC -c $TEX
+
+if [ "$1" = "tex" ]; then
+    aspell --lang en -x --mode=tex "${TEXCMD[@]}" -p $(pwd)/$DIC -c $FILE
+elif [ "$1" = "svg" ]; then
+    aspell --lang en -x --mode=sgml -p $(pwd)/$DIC -c $FILE
+elif [ "$1" = "code" ]; then
+    aspell --lang en -x --mode=ccpp -p $(pwd)/$DIC -c $FILE
+else
+    echo 'first arg should be either tex, svg, or code'
+fi
 
 VER=$(head -1 $DIC)
 tail -n +2 $DIC | LC_ALL=C sort > $DIC~
