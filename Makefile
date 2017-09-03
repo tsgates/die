@@ -72,6 +72,9 @@ spell: ## run a spell check
 	@for i in fig/*.svg; do bin/aspell.sh svg $$i; done
 	@for i in code/*.c; do bin/aspell.sh code $$i; done
 
+bib: all ## print bib used in the paper
+	bibexport latex.out/$(MAIN).aux
+
 clean: ## clean up
 	@bin/latexrun --clean
 	rm -f abstract.txt
