@@ -12,6 +12,20 @@ if len(sys.argv) != 3:
 pn_main = sys.argv[1]
 pn_abst = sys.argv[2]
 
+def get_keywords(tex):
+    rtn = {}
+    tok = re.findall(r"\\newcommand{\\([^}]+)}{(.*)}", tex)
+    for (k, v) in tok:
+        # clean up v
+        v = v.replace("\\mbox{", "")
+        v = v.replace("\\textsc{", "")
+        v = v.replace("\\xspace", "")
+        v = v.replace("}", "")
+        v = v.replace("{", "")
+        v = v.replace("\\", "")
+        rtn[k] = v
+    return rtn
+    
 def get_sys(tex):
     tok = re.findall(r"\\newcommand{\\sys}{\\mbox{\\textsc{([^}]*)}", tex)
     if len(tok) == 0:
@@ -19,7 +33,7 @@ def get_sys(tex):
         exit(1)
     return tok[0]
 
-SYS = get_sys(open(pn_main).read())
+kw = get_keywords(open(pn_main).read())
 
 abstract = []
 for l in open(pn_abst):
@@ -35,9 +49,10 @@ for l in open(pn_abst):
     l = l.replace("~", " ")
     l = l.replace("\\,", " ")
     l = l.replace("\\X", "x")
+    l = l.replace("\\&", "&")
+    l = l.replace("\\$", "$")
     l = l.replace("---", " -- ")
     l = l.replace("--", "-")
-    l = l.replace("\\sys", SYS)
     l = l.replace("\\ie", "i.e.")
     l = l.replace("\\eg", "e.g.")
     l = l.replace("\\etal", " et al.")
@@ -53,10 +68,13 @@ for l in open(pn_abst):
     l = l.replace("\\K", " K")
     l = l.replace("\\M", " M")
     l = l.replace("\\T", " T")
+
+    for k, v in kw.items():
+        l = l.replace("\\%s" % k, v)
     
     if "\\" in l:
-        print("WARN: unresolved char in")
-        print(" > %s" % l)
+        print("WARN: unresolved char in", file=sys.stderr)
+        print(" > %s" % l, file=sys.stderr)
         exit(1)
 
     abstract.append(l)
