@@ -40,6 +40,9 @@ for l in open(pn_abst):
     l = l.strip()
     if l.startswith("%"):
         continue
+    if l.endswith("%"):
+        l = l[:-1]
+
     if "{abstract}" in l:
         continue
     l = l.replace("\\%", "%")
