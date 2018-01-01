@@ -930,6 +930,7 @@ class LaTeX(Task):
                                 .format(linenum, filename))
         # Ironically, latex omits the .fls file itself
         outputs.add(filename)
+        outputs.add(jobname + '.synctex.gz') # synctex is not recorded
         return inputs, outputs
 
     def __create_outdirs(self, stdout):
