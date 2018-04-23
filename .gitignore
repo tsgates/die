@@ -22,3 +22,4 @@
 !/data/*.eps
 .latexrun.db
 /_minted-p/
+/p.synctex.gz
