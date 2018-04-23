@@ -21,3 +21,4 @@
 !/data/*.pdf
 !/data/*.eps
 .latexrun.db
+/_minted-p/

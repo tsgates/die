@@ -82,6 +82,7 @@ clean: ## clean up
 
 distclean: clean ## clean up completely
 	rm -f code/*.tex
+	rm -rf _minted_p
 
 abstract.txt: abstract.tex $(MAIN).tex ## generate abstract.txt
 	@bin/mkabstract $(MAIN).tex $< | fmt -w72 > $@
