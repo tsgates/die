@@ -19,13 +19,14 @@ def get_keywords(tex):
         # clean up v
         v = v.replace("\\mbox{", "")
         v = v.replace("\\textsc{", "")
+        v = v.replace("\\cc{", "")
         v = v.replace("\\xspace", "")
         v = v.replace("}", "")
         v = v.replace("{", "")
         v = v.replace("\\", "")
         rtn[k] = v
     return rtn
-    
+
 def get_sys(tex):
     tok = re.findall(r"\\newcommand{\\sys}{\\mbox{\\textsc{([^}]*)}", tex)
     if len(tok) == 0:
@@ -47,6 +48,7 @@ for l in open(pn_abst):
         continue
     l = l.replace("\\%", "%")
     l = l.replace("\\emph{", "")
+    l = l.replace("\\cc{", "")
     l = l.replace("{", "")
     l = l.replace("}", "")
     l = l.replace("~", " ")
@@ -77,7 +79,7 @@ for l in open(pn_abst):
 
     for k, v in kw.items():
         l = l.replace("\\%s" % k, v)
-    
+
     if "\\" in l:
         print("WARN: unresolved char in", file=sys.stderr)
         print(" > %s" % l, file=sys.stderr)
