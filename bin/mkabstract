@@ -76,6 +76,7 @@ for l in open(pn_abst):
     l = l.replace("\\K", " K")
     l = l.replace("\\M", " M")
     l = l.replace("\\T", " T")
+    l = l.replace("\\", "")
 
     for k, v in kw.items():
         l = l.replace("\\%s" % k, v)
@@ -83,7 +84,6 @@ for l in open(pn_abst):
     if "\\" in l:
         print("WARN: unresolved char in", file=sys.stderr)
         print(" > %s" % l, file=sys.stderr)
-        exit(1)
 
     abstract.append(l)
 
