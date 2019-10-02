@@ -4,16 +4,661 @@
 
 @string{sec-auditing = "Auditing"}
 @string{sec-recovery = "Recovery"}
-@string{sec-system   = "System Security"}
+@string{sec-fuzzing  = "Fuzzing"}
+@string{sec-syssec   = "System Security"}
+@string{sec-mobile   = "Mobile"}
 @string{sec-sandbox  = "Sandbox"}
 @string{sec-testing  = "Testing"}
+@string{sec-cloud    = "Cloud"}
+@string{sec-fs       = "File system"}
+@string{sec-bd       = "Big Data"}
+@string{sec-network  = "Network"}
+@string{sec-sys      = "System"}
+@string{sec-sgx      = "SGX"}
+@string{sec-conc     = "Concurrency"}
+
+%% 2020
+@InProceedings{jung:apollo,
+  title         = {{APOLLO: Automatic Detection and Diagnosis of Performance Regressions in Database Systems (to appear)}},
+  author        = {Jinho Jung and Hong Hu and Joy Arulraj and Taesoo Kim and Woonhak Kang},
+  crossref      = {VLDB20},
+  www-section   = sec-fuzzing,
+}
+
+%% 2019
+@article{seol:amnesiac,
+  title         = {{Amnesiac DRAM: A Proactive Defense Mechanism Against Cold Boot Attacks (to appear)}},
+  author        = {Hoseok Seol and Minhye Kim and Taesoo Kim and Yongdae Kim and Lee-Sup Kim and Lee-Sup Kim},
+  journal       = {IEEE Transactions on Computers (ToC)},
+  year          = 2019,
+  www-section   = sec-syssec,
+}
+
+@InProceedings{han:sgxhsm,
+  title         = {{Toward Scaling Hardware Security Module for Emerging Cloud Services (to appear)}},
+  author        = {Juhyeng Han and Seongmin Kim and Taesoo Kim and Dongsu Han},
+  crossref      = {SYSTEX19},
+  www-section   = sec-sgx,
+}
+
+@InProceedings{lu:typedive,
+  title         = {{Where Does It Go? Refining Indirect-Call Targets with Multi-Layer Type Analysis (to appear)}},
+  author        = {Kangjie Lu and Hong Hu},
+  crossref      = {CCS19},
+  www-section   = sec-syssec,
+}
+
+@InProceedings{kim:hydra,
+  title         = {{Finding Semantic Bugs in File Systems with an Extensible Fuzzing Framework (to appear)}},
+  author        = {Seulbae Kim and Meng Xu and Sanidhya Kashyap and Jungyeon Yoon and Wen Xu and Taesoo Kim},
+  crossref      = {SOSP19},
+  www-section   = sec-fs,
+  www-url       = "https://github.com/sslab-gatech/hydra",
+}
+
+@InProceedings{kashyap:shfllock,
+  title         = {{Scalable and Practical Locking With Shuffling (to appear)}},
+  author        = {Sanidhya Kashyap and Irina Calciu and Xiaohe Cheng and Changwoo Min and Taesoo Kim},
+  crossref      = {SOSP19},
+  www-section   = sec-sys,
+  www-url       = "https://github.com/sslab-gatech/shfllock",
+}
+
+@InProceedings{lee:recipe,
+  title         = {{RECIPE: Converting Concurrent DRAM Indexes to Persistent-Memory Indexes (to appear)}},
+  author        = {Se Kwon Lee and Jayashree Mohan and Sanidhya Kashyap and Taesoo Kim and Vijay Chidambaram},
+  crossref      = {SOSP19},
+  www-section   = sec-conc,
+}
+
+@InProceedings{Kadekodi:splitfs,
+  title         = {{SplitFS: Reducing Software Overhead in File Systems for Persistent Memory (to appear)}},
+  author        = {Rohan Kadekodi and Se Kwon Lee and Sanidhya Kashyap and Taesoo Kim and Aasheesh Kolli and Vijay Chidambaram},
+  crossref      = {SOSP19},
+  www-section   = sec-fs,
+}
+
+@InProceedings{zhao:esxi,
+  title         = {{Breaking Turtles All the Way Down: An Exploitation Chain to Break out of VMware ESXi}},
+  author        = {Hanqing Zhao and Yanyu Zhang and Kun Yang and Taesoo Kim},
+  crossref      = {WOOT19},
+  www-section   = sec-cloud,
+}
+
+@PhDThesis{kumar:thesis,
+  title        = {{Taming Latency in Data Center Applications}},
+  author       = {Mohan Kumar Kumar},
+  school       = {{Georgia Institute of Technology}},
+  year         = {2019},
+  month        = aug,
+  www-section  = sec-bd,
+}
+
+@PhDThesis{maass:thesis,
+  title        = {{Systems Abstractions for Big Data Processing on a Single Machine}},
+  author       = {Steffen Maass},
+  school       = {{Georgia Institute of Technology}},
+  year         = {2019},
+  month        = aug,
+  www-section  = sec-bd,
+}
+
+@InProceedings{qian:razor,
+  title         = {{RAZOR: A Framework for Post-deployment Software Debloating}},
+  author        = {Chenxiong Qian and Hong Hu and Mansour A Alharthi and Pak Ho Chung and Taesoo Kim and Wenke Lee},
+  crossref      = {SEC19},
+  www-section   = sec-syssec,
+  www-url       = "https://github.com/cxreet/razor",
+}
+
+@InProceedings{park:libmpk,
+  title         = {{libmpk: Software Abstraction for Intel Memory Protection Keys (Intel MPK)}},
+  author        = {Soyeon Park and Sangho Lee and Wen Xu and Hyungon Moon and Taesoo Kim},
+  crossref      = {ATC19},
+  www-section   = sec-sys,
+  www-url       = "https://github.com/sslab-gatech/libmpk",
+}
+
+@InProceedings{jung:fuzzification,
+  title         = {{Fuzzification: Anti-Fuzzing Techniques}},
+  author        = {Jinho Jung and Hong Hu and David Solodukhin and Daniel Pagan and Kyu Hyung Lee and Taesoo Kim},
+  crossref      = {SEC19},
+  www-section   = sec-fuzzing,
+  www-url       = "https://github.com/sslab-gatech/fuzzification",
+}
+
+@InProceedings{xu:cider,
+  title         = {{Dominance as a New Trusted Computing Primitive for the Internet of Things}},
+  author        = {Meng Xu and Manuel Huber and Zhichuang Sun and Paul England and Marcus Peinado and Sangho Lee and Andrey Marochko and Dennis Mattoon and Rob Spiger and Stefan Thom},
+  crossref      = {SP19},
+  www-section   = sec-recovery,
+}
+
+@InProceedings{xu:janus,
+  title         = {{Fuzzing File Systems via Two-Dimensional Input Space Exploration}},
+  author        = {Wen Xu and Hyungon Moon and Sanidhya Kashyap and Po-Ning Tseng and Taesoo Kim},
+  crossref      = {SP19},
+  www-section   = sec-fuzzing,
+  www-url       = "https://github.com/sslab-gatech/janus",
+}
+
+@InProceedings{kim:mvrlu,
+  title         = {{MV-RLU: Scaling Read-Log-Update with Multi-Versioning}},
+  author        = {Jaeho Kim and Ajit Mathew and Sanidhya Kashyap and Madhava Krishnan Ramanathan and Changwoo Min},
+  crossref      = {ASPLOS19},
+  www-section   = sec-conc,
+  www-url       = "https://github.com/cosmoss-vt/mv-rlu",
+}
+
+%% 2018
+@article{lu:buddy,
+  title       = {{Stopping Memory Disclosures via Diversification and Replicated Execution}},
+  author      = {Kangjie Lu and Meng Xu and Chengyu Song and Taesoo Kim and Wenke Lee},
+  journal     = {IEEE Transactions on Dependable and Secure Computing (TDSC)},
+  volume      = {preprint},
+  month       = oct,
+  year        = 2018,
+  www-section = sec-syssec,
+}
+
+@article{kim:sgx-tor2,
+  title       = {{SGX-Tor: A Secure and Practical Tor Anonymity Network With SGX Enclaves}},
+  author      = {Seongmin Kim and Juhyeng Han and Jaehyeong Ha and Taesoo Kim and Dongsu Han},
+  journal     = {IEEE/ACM Transactions on Networking (ToN)},
+  volume      = {26},
+  number      = {5},
+  pages       = {2174--2187},
+  month       = oct,
+  year        = 2018,
+  www-section = sec-sgx,
+  www-url     = "https://github.com/KAIST-INA/SGX-Tor",
+}
+
+@InProceedings{hu:ucfi,
+  title         = {{Enforcing Unique Code Target Property for Control-Flow Integrity}},
+  author        = {Hong Hu and Chenxiong Qian and Carter Yagemann and Simon Pak Ho Chung and William R. Harris and Taesoo Kim and Wenke Lee},
+  crossref      = {CCS18},
+  www-section   = sec-syssec,
+  www-url       = "https://github.com/uCFI-GATech",
+}
+
+@InProceedings{cui:rept,
+  title         = {{REPT: Reverse Debugging of Failures in Deployed Software}},
+  author        = {Weidong Cui and Xinyang Ge and Baris Kasikci and Ben Niu and Upamanyu Sharma and Ruoyu Wang and Insu Yun},
+  crossref      = {OSDI18},
+  www-section   = sec-sys,
+}
+
+@InProceedings{alharthi:debloat-study,
+  title         = {{On the Effectiveness of Kernel Debloating via Compile-time Configuration}},
+  author        = {Mansour Alharthi and Hong Hu and Hyungon Moon and Taesoo Kim},
+  crossref      = {SALAD18},
+  www-section   = sec-syssec,
+}
+
+@InProceedings{yun:qsym,
+  title         = {{QSYM: A Practical Concolic Execution Engine Tailored for Hybrid Fuzzing}},
+  author        = {Insu Yun and Sangho Lee and Meng Xu and Yeongjin Jang and Taesoo Kim},
+  crossref      = {SEC18},
+  www-section   = sec-fuzzing,
+  www-url       = "https://github.com/sslab-gatech/qsym",
+}
+
+@InProceedings{ji:rtag,
+  title         = {{Enabling Refinable Cross-host Attack Investigation with Efficient Data Flow Tagging and Tracking}},
+  author        = {Yang Ji and Sangho Lee and Mattia Fazzini and Joey Allen and Evan Downing and Taesoo Kim and Alessandro Orso and Wenke Lee},
+  crossref      = {SEC18},
+  www-section   = sec-auditing,
+}
+
+@InProceedings{kashyap:ecs,
+  title         = {{Scaling Guest OS Critical Sections with eCS}},
+  author        = {Sanidhya Kashyap and Changwoo Min and Taesoo Kim},
+  crossref      = {ATC18},
+  www-section   = sec-sys,
+  www-url       = "https://github.com/sslab-gatech/eCS",
+}
+
+@InProceedings{min:solros,
+  title         = {{SOLROS: A Data-Centric Operating System Architecture for Heterogeneous Computing}},
+  author        = {Changwoo Min and Woon-Hak Kang and Mohan Kumar and Sanidhya Kashyap and Steffen Maass and Heeseung Jo and Taesoo Kim},
+  crossref      = {EUROSYS18},
+  www-section   = sec-sys,
+}
+
+@InProceedings{kashyap:ordo,
+  title         = {{A Scalable Ordering Primitive For Multicore Machines}},
+  author        = {Sanidhya Kashyap and Changwoo Min and Kangnyeon Kim and Taesoo Kim},
+  crossref      = {EUROSYS18},
+  www-section   = sec-conc,
+  www-url       = "https://github.com/sslab-gatech/ordo",
+}
+
+@InProceedings{maass:kaleidoscope,
+  title         = {{Kaleidoscope: Graph Analytics on Evolving Graphs}},
+  author        = {Steffen Maass and Taesoo Kim},
+  crossref      = {EURODW18},
+  www-section   = sec-sys,
+}
+
+@InProceedings{xu:deadline,
+  title         = {{Precise and Scalable Detection of Double-Fetch Bugs in OS Kernels}},
+  author        = {Meng Xu and Chenxiong Qian and Kangjie Lu and Michael Backes and Taesoo Kim},
+  crossref      = {SP18},
+  www-section   = sec-syssec,
+  www-url       = "https://github.com/sslab-gatech/deadline",
+}
+
+@InProceedings{kumar:latr,
+  title         = {{LATR: Lazy Translation Coherence}},
+  author        = {Mohan Kumar and Steffen Maass and Sanidhya Kashyap and J\'{a}n Vesel\'{y} and Zi Yan and Taesoo Kim and Abhishek Bhattacharjee and Tushar Krishna},
+  crossref      = {ASPLOS18},
+  www-section   = sec-sys,
+  www-url       = "https://github.com/sslab-gatech/latr",
+}
+
+@article{cho:breakup,
+  title         = {{Prevention of Cross-update Privacy Leaks on Android}},
+  author        = {Beumjin Cho and Sangho Lee and Meng Xu and Sangwoo Ji and Taesoo Kim and Jong Kim},
+  journal       = {Computer Science and Information Systems},
+  volume        = {15},
+  number        = {1},
+  pages         = {111--137},
+  month         = jan,
+  year          = 2018,
+  www-section   = sec-mobile,
+}
+
+%% 2017
+@InProceedings{jang:sgx-bomb,
+  title         = {{SGX-Bomb: Locking Down the Processor via Rowhammer Attack}},
+  author        = {Yeongjin Jang and Jaehyuk Lee and Sangho Lee and Taesoo Kim},
+  crossref      = {SYSTEX17},
+  www-section   = sec-sgx,
+  www-url       = "https://github.com/sslab-gatech/sgx-bomb",
+}
+
+@PhDThesis{jang:thesis,
+  title        = {{Building Trust in the User I/O in Computer Systems}},
+  author       = {Yeongjin Jang},
+  school       = {{Georgia Institute of Technology}},
+  year         = {2017},
+  month        = aug,
+  www-section  = sec-syssec,
+}
+
+@PhDThesis{lu:thesis,
+  title        = {{Securing Software Systems by Preventing Information Leaks}},
+  author       = {Kangjie Lu},
+  school       = {{Georgia Institute of Technology}},
+  year         = {2017},
+  month        = aug,
+  www-section  = sec-syssec,
+}
+
+@InProceedings{xu:os-fuzz,
+  title         = {{Designing New Operating Primitives to Improve Fuzzing Performance}},
+  author        = {Wen Xu and Sanidhya Kashyap and Changwoo Min and Taesoo Kim},
+  crossref      = {CCS17},
+  www-section   = sec-fuzzing,
+  www-url       = "https://github.com/sslab-gatech/perf-fuzz",
+}
+
+@InProceedings{ji:rain,
+  title         = {{RAIN: Refinable Attack Investigation with On-demand Inter-Process Information Flow Tracking}},
+  author        = {Yang Ji and Sangho Lee and Evan Downing and Weiren Wang and Mattia Fazzini and Taesoo Kim and Alessandro Orso and Wenke Lee},
+  crossref      = {CCS17},
+  www-section   = sec-auditing,
+}
+
+@InProceedings{duan:osspolice,
+  title         = {{Checking Open-Source License Violation and 1-day Security Risk at Large Scale}},
+  author        = {Ruian Duan and Ashish Bijlani and Meng Xu and Taesoo Kim and Wenke Lee},
+  crossref      = {CCS17},
+  www-section   = sec-syssec,
+  www-url       = "https://github.com/osssanitizer/osspolice",
+}
+
+@InProceedings{jo:flsched,
+  title         = {{FLSCHED: A Lockless and Lightweight Approach to OS Scheduler for Xeon Phi}},
+  author        = {Heeseung Jo and Woonhak Kang and Changwoo Min and Taesoo Kim},
+  crossref      = {APSYS17},
+  www-section   = sec-sys,
+}
+
+@InProceedings{lee:sgx-branch-shadow,
+  title         = {{Inferring Fine-grained Control Flow Inside SGX Enclaves with Branch Shadowing}},
+  author        = {Sangho Lee and Ming-Wei Shih and Prasun Gera and Taesoo Kim and Hyesoon Kim and Marcus Peinado},
+  crossref      = {SEC17},
+  www-section   = sec-sgx,
+  www-url       = "https://github.com/sslab-gatech/branch-shadowing",
+}
+
+@InProceedings{lee:darkrop,
+  title         = {{Hacking in Darkness: Return-oriented Programming against Secure Enclaves}},
+  author        = {Jaehyuk Lee and Jinsoo Jang and Yeongjin Jang and Nohyun Kwak and Yeseul Choi and Changho Choi and Taesoo Kim and Marcus Peinado and Brent B. Kang},
+  crossref      = {SEC17},
+  www-section   = sec-sgx,
+}
+
+@InProceedings{ding:pittypat,
+  title         = {{Efficient Protection of Path-Sensitive Control Security}},
+  author        = {Ren Ding and Chenxiong Qian and Chengyu Song and Bill Harris and Taesoo Kim and Wenke Lee},
+  crossref      = {SEC17},
+  www-section   = sec-syssec,
+}
+
+@InProceedings{xu:platpal,
+  title         = {{PlatPal: Detecting Malicious Documents with Platform Diversity}},
+  author        = {Meng Xu and Taesoo Kim},
+  crossref      = {SEC17},
+  www-section   = sec-syssec,
+  www-url       = "https://github.com/sslab-gatech/platpal",
+}
+
+@InProceedings{jung:avpass,
+  title        = {{AVPASS: Leaking and Bypassing Antivirus Detection Model Automatically}},
+  author       = {Jinho Jung and Chanil Jeon and Max Wolotsky and Insu Yun and Taesoo Kim},
+  crossref     = {BLACKHAT17},
+  www-section  = sec-mobile,
+  www-url      = "https://github.com/sslab-gatech/avpass",
+}
+
+
+@InProceedings{kashyap:cst,
+  title       = {{Scalable NUMA-aware Blocking Synchronization Primitives}},
+  author      = {Sanidhya Kashyap and Changwoo Min and Taesoo Kim},
+  crossref    = {ATC17},
+  www-section = sec-sys,
+  www-url     = "https://github.com/sslab-gatech/cst-locks",
+}
+
+@InProceedings{kim:cab-fuzz,
+  title       = {{CAB-Fuzz: Practical Concolic Testing Techniques for COTS Operating Systems}},
+  author      = {Su Yong Kim and Sangho Lee and Insu Yun and Wen Xu and Byoungyoung Lee and Youngtae Yun and Taesoo Kim},
+  crossref    = {ATC17},
+  www-section = sec-fuzzing,
+}
+
+@InProceedings{xu:bunshin,
+  title       = {{Bunshin: Compositing Security Mechanisms through Diversification}},
+  author      = {Meng Xu and Kangjie Lu and Taesoo Kim and Wenke Lee},
+  crossref    = {ATC17},
+  www-section = sec-syssec,
+  www-url     = "https://github.com/sslab-gatech/bunshin",
+}
+
+@InProceedings{maass:mosaic,
+  title       = {{Mosaic: Processing a Trillion-Edge Graph on a Single Machine}},
+  author      = {Steffen Maass and Changwoo Min and Sanidhya Kashyap and Woonhak Kang and Mohan Kumar and Taesoo Kim},
+  crossref    = {EUROSYS17},
+  www-section = sec-bd,
+  www-url     = "https://github.com/sslab-gatech/mosaic",
+}
+
+@InProceedings{kim:sgx-tor,
+  title       = {{Enhancing Security and Privacy of Tor's Ecosystem by using Trusted Execution Environments}},
+  author      = {Seongmin Kim and Juhyeng Han and Jaehyeong Ha and Taesoo Kim and Dongsu Han},
+  crossref    = {NSDI17},
+  www-section = sec-sgx,
+  www-url     = "https://github.com/KAIST-INA/SGX-Tor",
+}
+
+@InProceedings{seo:sgx-shield,
+  title       = {{SGX-Shield: Enabling Address Space Layout Randomization for SGX Programs}},
+  author      = {Jaebaek Seo and Byoungyoung Lee and Sungmin Kim and Ming-Wei Shih and Insik Shin and Dongsu Han and Taesoo Kim},
+  crossref    = {NDSS17},
+  www-section = sec-sgx,
+  www-url     = "https://github.com/jaebaek/SGX-Shield",
+}
+
+@InProceedings{shih:tsgx,
+  title       = {{T-SGX: Eradicating Controlled-Channel Attacks Against Enclave Programs}},
+  author      = {Ming-Wei Shih and Sangho Lee and Taesoo Kim and Marcus Peinado},
+  crossref    = {NDSS17},
+  www-section = sec-sgx,
+  www-url     = "https://github.com/sslab-gatech/t-sgx",
+}
+
+%% 2016
+
+@PhDThesis{lee:thesis,
+  title        = {{Protecting Computer Systems through Eliminating or Analyzing Vulnerabilities}},
+  author       = {Byoungyoung Lee},
+  school       = {{Georgia Institute of Technology}},
+  year         = {2016},
+  month        = aug,
+  www-section  = sec-syssec,
+}
+
+@PhDThesis{song:thesis,
+  title        = {{Preventing Exploits against Memory Corruption Vulnerabilities}},
+  author       = {Chengyu Song},
+  school       = {{Georgia Institute of Technology}},
+  year         = {2016},
+  month        = aug,
+  www-section  = sec-syssec,
+}
+
+@InProceedings{jang:drk-ccs,
+  title        = {{Breaking Kernel Address Space Layout Randomization with Intel TSX}},
+  author       = {Yeongjin Jang and Sangho Lee and Taesoo Kim},
+  crossref     = {CCS16},
+  www-section  = sec-syssec,
+  www-url       = "https://github.com/sslab-gatech/DrK",
+}
+
+@InProceedings{lu:unisan,
+  title        = {{UniSan: Proactive Kernel Memory Initialization to Eliminate Data Leakages}},
+  author       = {Kangjie Lu and Chengyu Song and Taesoo Kim and Wenke Lee},
+  crossref     = {CCS16},
+  www-section  = sec-syssec,
+  www-url       = "https://sslab.gtisc.gatech.edu/pages/unisan.html",
+}
+
+@InProceedings{bhardwaj:airbox,
+  title        = {{Fast, Scalable and Secure Onloading of Edge Functions using AirBox}},
+  author       = {Ketan Bhardwaj and Ming-Wei Shih and Pragya Agarwal and Ada Gavrilovska and Taesoo Kim and Karsten Schwan},
+  booktitle    = {Proceedings of the 1st IEEE/ACM Symposium on Edge Computing (SEC 2016)},
+  location     = {Washington, DC},
+  month        = oct,
+  year         = 2016,
+  www-section  = sec-sgx,
+}
+
+@InProceedings{boldyreva:notion,
+  title        = {{Provably-Secure Remote Memory Attestation for Heap Overflow Protection}},
+  author       = {Alexandra Boldyreva and Taesoo Kim and Richard J. Lipton and Bogdan Warinschi},
+  booktitle    = {Proceedings of the 10th Conference on Security and Cryptography for Networks (SCN 2016)},
+  location     = {Amalfi, Italy},
+  month        = aug,
+  year         = 2016,
+  www-section  = sec-syssec,
+}
+
+@Article{xu:android-survey,
+  title         = {{Toward Engineering a Secure Android Ecosystem: A Survey of Existing Techniques}},
+  author        = {Meng Xu and Chengyu Song and Yang ji and Ming-Wei Shih and Kangjie Lu and Cong Zheng and Ruian Duan and Yeongjin Jang and Byoungyoung Lee and Chenxiong Qian and Sangho Lee and Taesoo Kim},
+  journal       = {ACM Computing Surveys (CSUR)},
+  volume        = 49,
+  number        = 2,
+  month         = aug,
+  year          = 2016,
+  www-section   = sec-mobile,
+}
+
+
+@InProceedings{yun:apisan,
+  title         = {{APISan: Sanitizing API Usages through Semantic Cross-checking}},
+  author        = {Insu Yun and Changwoo Min and Xujie Si and Yeongjin Jang and Taesoo Kim and Mayur Naik},
+  crossref      = {SEC16},
+  www-section   = sec-syssec,
+  www-url       = "https://github.com/sslab-gatech/apisan",
+}
+
+@InProceedings{jang:drk-bh,
+  title        = {{Breaking Kernel Address Space Layout Randomization with Intel TSX}},
+  author       = {Yeongjin Jang and Sangho Lee and Taesoo Kim},
+  crossref     = {BLACKHAT16},
+  www-section  = sec-syssec,
+  www-url      = "https://github.com/sslab-gatech/DrK",
+}
+
+
+@InProceedings{kashyap:kup,
+  title         = {{Instant OS Updates via Userspace Checkpoint-and-Restart}},
+  author        = {Sanidhya Kashyap and Changwoo Min and Byoungyoung Lee and Taesoo Kim and Pavel Emelyanov},
+  crossref      = {ATC16},
+  www-section   = sec-sys,
+}
+
+@InProceedings{min:fxmark,
+  title         = {{Understanding Manycore Scalability of File Systems}},
+  author        = {Changwoo Min and Sanidhya Kashyap and Steffen Maass and Woonhak Kang and Taesoo Kim},
+  crossref      = {ATC16},
+  www-section   = sec-fs,
+  www-url       = "https://github.com/sslab-gatech/fxmark",
+}
+
+@article{han:metasync2,
+  title         = {{MetaSync: Coordinating Storage Across Multiple File Synchronization Services}},
+  author        = {Seungyeop Han and Haichen Shen and Taesoo Kim and Arvind Krishnamurthy and Thomas Anderson and David Wetherall},
+  journal       = {IEEE Internet Computing},
+  months        = may # {--} # jun,
+  year          = 2016,
+  www-section   = sec-cloud,
+  www-url       = "http://uwnetworkslab.github.io/metasync",
+}
+
+@InProceedings{song:hdfi,
+  title         = {{HDFI: Hardware-Assisted Data-Fow Isolation}},
+  author        = {Chengyu Song and Hyungon Moon and Monjur Alam and Insu Yun and Byoungyoung Lee and Taesoo Kim and Wenke Lee and Yunheung Paek},
+  crossref      = {SP16},
+  www-section   = sec-syssec,
+  www-url       = "https://github.com/sslab-gatech/hdfi",
+}
+
+@InProceedings{kashyap:oppspinlocks,
+  title         = {{Opportunistic Spinlocks: Achieving Virtual Machine Scalability in the Clouds}},
+  author        = {Sanidhya Kashyap and Changwoo Min and Taesoo Kim},
+  crossref      = {OSR16},
+  www-section   = sec-cloud,
+  www-url       = "https://lwn.net/Articles/650776/",
+}
+
+@InProceedings{shih:snfv,
+  title         = {{S-NFV: Securing NFV states by using SGX}},
+  author        = {Ming-Wei Shih and Mohan Kumar and Taesoo Kim and Ada Gavrilovska},
+  crossref      = {SDNNFVSEC16},
+  www-section   = sec-sgx,
+}
+
+@InProceedings{jain:opensgx,
+  title         = {{OpenSGX: An Open Platform for SGX Research}},
+  author        = {Prerit Jain and Soham Desai and Seongmin Kim and Ming-Wei Shih and JaeHyuk Lee and Changho Choi and Youjung Shin and Taesoo Kim and Brent B. Kang and Dongsu Han},
+  crossref      = {NDSS16},
+  www-section   = sec-sgx,
+  www-url       = "https://github.com/sslab-gatech/opensgx",
+}
+
+@InProceedings{song:kenali,
+  title         = {{Enforcing Kernel Security Invariants with Data Flow Integrity}},
+  author        = {Chengyu Song and Byoungyoung Lee and Kangjie Lu and William R. Harris and Taesoo Kim and Wenke Lee},
+  crossref      = {NDSS16},
+  www-section   = sec-syssec,
+  www-url       = "https://github.com/sslab-gatech/kenali-kernel",
+}
+
+@InProceedings{seo:flexdroid,
+  title         = {{FlexDroid: Enforcing In-App Privilege Separation in Android}},
+  author        = {Jaebaek Seo and Daehyeok Kim and Donghyun Cho and Taesoo Kim and Insik Shin},
+  crossref      = {NDSS16},
+  www-section   = sec-mobile,
+}
+
+@InProceedings{lu:runtimeaslr,
+  title         = {{How to Make ASLR Win the Clone Wars: Runtime Re-Randomization}},
+  author        = {Kangjie Lu and Stefan N{\"u}rnberger and Michael Backes and Wenke Lee},
+  crossref      = {NDSS16},
+  www-section   = sec-syssec,
+}
 
 %% 2015
+@InProceedings{kim:sgxtor,
+  title         = {{A First Step Towards Leveraging Commodity Trusted Execution Environments for Network Applications}},
+  author        = {Seongmin Kim and Youjung Shin and Jaehyung Ha and Taesoo Kim and Dongsu Han},
+  crossref      = {HOTNET15},
+  www-section   = sec-network,
+  www-url       = "https://github.com/sslab-gatech/opensgx",
+}
+
+@InProceedings{xu:ucognito,
+  title         = {{UCognito: Private Browsing without Tears}},
+  author        = {Meng Xu and Yeongjin Jang and Xinyu Xing and Taesoo Kim and Wenke Lee},
+  crossref      = {CCS15},
+  www-section   = sec-sandbox,
+  www-url       = "https://sslab.gtisc.gatech.edu/pages/ucognito.html",
+}
+
+@InProceedings{lu:aslrguard,
+  title         = {{ASLR-Guard: Stopping Address Space Leakage for Code Reuse Attacks}},
+  author        = {Kangjie Lu and Chengyu Song and Byoungyoung Lee and Simon P. Chung and Taesoo Kim and Wenke Lee},
+  crossref      = {CCS15},
+  www-section   = sec-syssec,
+}
+
+@InProceedings{kim:volte,
+  title         = {{Breaking and Fixing VoLTE: Exploiting Hidden Data Channels and Mis-implementations}},
+  author        = {Hongil Kim and Dongkwan Kim and Minhee Kwon and Hyungseok Han and Yeongjin Jang and Dongsu Han and Taesoo Kim and Yongdae Kim},
+  crossref      = {CCS15},
+  www-section   = sec-network,
+}
+
+@InProceedings{min:juxta,
+  title         = {{Cross-checking Semantic Correctness: The Case of Finding File System Bugs}},
+  author        = {Changwoo Min and Sanidhya Kashyap and Byoungyoung Lee and Chengyu Song and Taesoo Kim},
+  crossref      = {SOSP15},
+  www-section   = sec-fs,
+  www-url       = "https://github.com/sslab-gatech/juxta",
+}
+
+@InProceedings{kashyap:oticket,
+  title         = {{Scalability In The Clouds! A Myth Or Reality?}},
+  author        = {Sanidhya Kashyap and Changwoo Min and Taesoo Kim},
+  crossref      = {APSYS15},
+  www-section   = sec-cloud,
+  www-url       = "https://lwn.net/Articles/650776/",
+}
+
+@InProceedings{lee:caver,
+  title         = {{Type Casting Verification}: Stopping an Emerging Attack Vector},
+  author        = {Byoungyoung Lee and Chengyu Song and Taesoo Kim and Wenke Lee},
+  crossref      = {SEC15},
+  www-section   = sec-syssec,
+  www-url       = "https://sslab.gtisc.gatech.edu/pages/eshard-extreme-software-hardening.html",
+}
+
+@InProceedings{min:cfs,
+  title         = {{Lightweight Application-Level Crash Consistency on Transactional Flash Storage}},
+  author        = {Changwoo Min and Woon-Hak Kang and Taesoo Kim and Sang-Won Lee and Young Ik Eom},
+  crossref      = {ATC15},
+  www-section   = sec-fs,
+}
+
+@InProceedings{han:metasync,
+  title         = {{MetaSync}: File Synchronization Across Multiple Untrusted Storage Services},
+  author        = {Seungyeop Han and Haichen Shen and Taesoo Kim and Arvind Krishnamurthy and Thomas Anderson and David Wetherall},
+  crossref      = {ATC15},
+  www-section   = sec-cloud,
+  www-url       = "http://uwnetworkslab.github.io/metasync",
+}
+
 @InProceedings{lee:dangnull,
   title         = {Preventing Use-after-free with Dangling Pointers Nullification},
   author        = {Byoungyoung Lee and Chengyu Song and Yeongjin Jang and Tielei Wang and Taesoo Kim and Long Lu and Wenke Lee},
   crossref      = {NDSS15},
-  www-section   = sec-system,
+  www-section   = sec-syssec,
+  www-url       = "https://sslab.gtisc.gatech.edu/pages/eshard-extreme-software-hardening.html",
 }
 
 %% 2014
@@ -21,7 +666,7 @@
   title         = {{From Zygote to Morula}: Fortifying weakened {ASLR} on {Android}},
   author        = {Byoungyoung Lee and Long Lu and Tielei Wang and Taesoo Kim and Wenke Lee},
   crossref      = {SP14},
-  www-section   = sec-system,
+  www-section   = sec-mobile,
   www-url       = "https://github.com/lifeasageek/morula",
   www-git       = "https://github.com/lifeasageek/morula",
 }
@@ -32,6 +677,13 @@
   crossref      = {OSDI14},
   www-section   = sec-auditing,
   www-url       = "https://github.com/haogang/rail",
+}
+
+@InProceedings{lee:breakaslr,
+  title        = {Abusing Performance Optimization Weaknesses to Bypass {ASLR}},
+  author       = {Byoungyoung Lee and Yeongjin Jang and Tielei Wang and Chengyu Song and Long Lu and Taesoo Kim and Wenke Lee},
+  crossref     = {BLACKHAT14},
+  www-section  = sec-syssec,
 }
 
 %% 2013
@@ -46,7 +698,7 @@
   title         = {Security Bugs in Embedded Interpreters},
   author        = {Haogang Chen and Cody Cutler and Taesoo Kim and Yandong Mao and Xi Wang and Nickolai Zeldovich and M. Frans Kaashoek},
   crossref      = {APSYS13},
-  www-section   = sec-system,
+  www-section   = sec-syssec,
 }
 
 @inproceedings{kim:tao,
@@ -70,7 +722,7 @@
   author        = {Taesoo Kim and Ramesh Chandra and Nickolai Zeldovich},
   crossref      = {OSDI12},
   www-section   = sec-auditing,
-  www-url       = "http://css.csail.mit.edu/undo",  
+  www-url       = "http://css.csail.mit.edu/undo",
 }
 
 @inproceedings{kim:dare,
@@ -84,7 +736,7 @@
   title         = {{StealthMem}: System-Level Protection Against Cache-based Side Channel Attacks in the Cloud},
   author        = {Taesoo Kim and Marcus Peinado and Gloria Mainar-Ruiz},
   crossref      = {SEC12},
-  www-section   = sec-system,
+  www-section   = sec-cloud,
 }
 
 % 2011
@@ -109,5 +761,5 @@
   title         = {Making {Linux} Protection Mechanisms Egalitarian with {UserFS}},
   author        = {Taesoo Kim and Nickolai Zeldovich},
   crossref      = {SEC10},
-  www-section   = sec-system,
+  www-section   = sec-syssec,
 }
