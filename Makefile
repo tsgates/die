@@ -9,13 +9,6 @@ LTEX := --latex-args="-synctex=1 -shell-escape"
 BTEX := --bibtex-args="-min-crossrefs=99"
 SHELL:= $(shell echo $$SHELL)
 
-UNAME_S := $(shell uname -s)
-ifeq ($(UNAME_S),Darwin)
-  SOFFICE=/Applications/LibreOffice.app/Contents/MacOS/soffice
-else
-  SOFFICE=soffice
-endif
-
 all: $(DEPS) ## generate a pdf
 	@TEXINPUTS="sty:" bin/latexrun $(LTEX) $(BTEX) $(MAIN)
 	cp latex.out/$(MAIN).synctex.gz .
@@ -44,11 +37,10 @@ code/fmt.tex: ## generate color table
 	pygmentize -f latex -S default > $@
 
 fig/%.pdf: fig/%.svg ## generate pdf from svg
-	bin/inkscape-svg2pdf.sh ${CURDIR}/$^ ${CURDIR}/$@
+	bin/svg2pdf.sh ${CURDIR}/$^ ${CURDIR}/$@
 
 fig/%.pdf: fig/%.odg ## generate pdf from LibreOffice Draw
-	$(SOFFICE) --convert-to pdf $< --outdir $(@D)
-	pdfcrop $@ $@
+	bin/odg2pdf.sh $^ $@
 
 data/%.tex: data/%.gp ## generate plot
 	gnuplot $^
