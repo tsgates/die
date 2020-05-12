@@ -16,12 +16,50 @@
 @string{sec-sys      = "System"}
 @string{sec-sgx      = "SGX"}
 @string{sec-conc     = "Concurrency"}
+@string{sec-aml      = "Adversarial Machine Learning"}
 
 %% 2020
+@InProceedings{jin:pwn2own2020-safari,
+  title        = {{Compromising the macOS kernel through Safari by chaining six vulnerabilities}},
+  author       = {Yonghwi Jin and Jungwon Lim and Insu Yun},
+  crossref     = {BLACKHAT20},
+  www-section  = sec-syssec
+}
+
+@InProceedings{ding:desensitization,
+  title         = {{DESENSITIZATION: Privacy-Aware and Attack-Preserving Crash Report}},
+  author        = {Ren Ding and Hong Hu and Wen Xu and Taesoo Kim},
+  crossref      = {NDSS20},
+  www-section   = sec-syssec,
+  www-url       = "https://github.com/sslab-gatech/desensitization",
+}
+
+@InProceedings{yun:archeap,
+  title         = {{Automatic Techniques to Systematically Discover New Heap Exploitation Primitives (to appear)}},
+  author        = {Insu Yun and Dhaval Kapil and Taesoo Kim},
+  crossref      = {SEC20},
+  www-section   = sec-syssec,
+}
+
 @InProceedings{jung:apollo,
   title         = {{APOLLO: Automatic Detection and Diagnosis of Performance Regressions in Database Systems (to appear)}},
   author        = {Jinho Jung and Hong Hu and Joy Arulraj and Taesoo Kim and Woonhak Kang},
   crossref      = {VLDB20},
+  www-section   = sec-fuzzing,
+  www-url       = "https://github.com/sslab-gatech/apollo",
+}
+
+@InProceedings{park:die,
+  title         = {{Fuzzing JavaScript Engines with Aspect-preserving Mutation (to appear)}},
+  author        = {Soyeon Park and Wen Xu and Insu Yun and Daehee Jang and Taesoo Kim},
+  crossref      = {SP20},
+  www-section   = sec-fuzzing,
+}
+
+@InProceedings{xu:krace,
+  title         = {{Krace: Data Race Fuzzing for Kernel File Systems (to appear)}},
+  author        = {Meng Xu and Sanidhya Kashyap and Hanqing Zhao and Taesoo Kim},
+  crossref      = {SP20},
   www-section   = sec-fuzzing,
 }
 
@@ -34,22 +72,36 @@
   www-section   = sec-syssec,
 }
 
-@InProceedings{han:sgxhsm,
-  title         = {{Toward Scaling Hardware Security Module for Emerging Cloud Services (to appear)}},
-  author        = {Juhyeng Han and Seongmin Kim and Taesoo Kim and Dongsu Han},
-  crossref      = {SYSTEX19},
-  www-section   = sec-sgx,
+@InProceedings{das:mlsploit-kdd,
+  title         = {{MLsploit: A Framework for Interactive Experimentation with Adversarial Machine Learning Research}},
+  author        = {Nilaksh Das and Siwei Li and Chanil Jeon and Jinho Jung and Shang-Tse Chen and Carter Yagemann and Evan Downing and Haekyu Park and Evan Yang and Li Chen and Michael Kounavis and Ravi Sahita and David Durham and Scott Buck and Duen Horng Chau and Taesoo Kim and Wenke Lee},
+  crossref      = {KDD19},
+  www-section   = sec-aml,
+}
+
+@InProceedings{das:mlsploit,
+  title         = {{MLsploit: A Cloud-Based Framework for Adversarial Machine Learning Research}},
+  author        = {Nilaksh Das and Siwei Li and Chanil Jeon and Jinho Jung and Shang-Tse Chen and Carter Yagemann and Evan Downing and Haekyu Park and Evan Yang and Li Chen and Michael Kounavis and Ravi Sahita and David Durham and Scott Buck and Polo Chau and Taesoo Kim and Wenke Lee},
+  crossref      = {BLACKHATASIA19},
+  www-section   = sec-aml,
 }
 
 @InProceedings{lu:typedive,
-  title         = {{Where Does It Go? Refining Indirect-Call Targets with Multi-Layer Type Analysis (to appear)}},
+  title         = {{Where Does It Go? Refining Indirect-Call Targets with Multi-Layer Type Analysis}},
   author        = {Kangjie Lu and Hong Hu},
   crossref      = {CCS19},
   www-section   = sec-syssec,
 }
 
+@InProceedings{han:sgxhsm,
+  title         = {{Toward Scaling Hardware Security Module for Emerging Cloud Services}},
+  author        = {Juhyeng Han and Seongmin Kim and Taesoo Kim and Dongsu Han},
+  crossref      = {SYSTEX19},
+  www-section   = sec-sgx,
+}
+
 @InProceedings{kim:hydra,
-  title         = {{Finding Semantic Bugs in File Systems with an Extensible Fuzzing Framework (to appear)}},
+  title         = {{Finding Semantic Bugs in File Systems with an Extensible Fuzzing Framework}},
   author        = {Seulbae Kim and Meng Xu and Sanidhya Kashyap and Jungyeon Yoon and Wen Xu and Taesoo Kim},
   crossref      = {SOSP19},
   www-section   = sec-fs,
@@ -57,7 +109,7 @@
 }
 
 @InProceedings{kashyap:shfllock,
-  title         = {{Scalable and Practical Locking With Shuffling (to appear)}},
+  title         = {{Scalable and Practical Locking With Shuffling}},
   author        = {Sanidhya Kashyap and Irina Calciu and Xiaohe Cheng and Changwoo Min and Taesoo Kim},
   crossref      = {SOSP19},
   www-section   = sec-sys,
@@ -65,17 +117,19 @@
 }
 
 @InProceedings{lee:recipe,
-  title         = {{RECIPE: Converting Concurrent DRAM Indexes to Persistent-Memory Indexes (to appear)}},
+  title         = {{RECIPE: Converting Concurrent DRAM Indexes to Persistent-Memory Indexes}},
   author        = {Se Kwon Lee and Jayashree Mohan and Sanidhya Kashyap and Taesoo Kim and Vijay Chidambaram},
   crossref      = {SOSP19},
   www-section   = sec-conc,
+  www-url       = "https://github.com/utsaslab/RECIPE",
 }
 
-@InProceedings{Kadekodi:splitfs,
-  title         = {{SplitFS: Reducing Software Overhead in File Systems for Persistent Memory (to appear)}},
+@InProceedings{kadekodi:splitfs,
+  title         = {{SplitFS: Reducing Software Overhead in File Systems for Persistent Memory}},
   author        = {Rohan Kadekodi and Se Kwon Lee and Sanidhya Kashyap and Taesoo Kim and Aasheesh Kolli and Vijay Chidambaram},
   crossref      = {SOSP19},
   www-section   = sec-fs,
+  www-url       = "https://github.com/utsaslab/SplitFS",
 }
 
 @InProceedings{zhao:esxi,
@@ -209,6 +263,7 @@
   author        = {Yang Ji and Sangho Lee and Mattia Fazzini and Joey Allen and Evan Downing and Taesoo Kim and Alessandro Orso and Wenke Lee},
   crossref      = {SEC18},
   www-section   = sec-auditing,
+  www-url       = "https://github.com/redspot/theia-ki-target-agent",
 }
 
 @InProceedings{kashyap:ecs,
@@ -309,6 +364,7 @@
   author        = {Yang Ji and Sangho Lee and Evan Downing and Weiren Wang and Mattia Fazzini and Taesoo Kim and Alessandro Orso and Wenke Lee},
   crossref      = {CCS17},
   www-section   = sec-auditing,
+  www-url       = "https://github.com/redspot/theia-ki-target-agent",
 }
 
 @InProceedings{duan:osspolice,
