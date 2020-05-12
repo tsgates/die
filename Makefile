@@ -11,10 +11,8 @@ SHELL:= $(shell echo $$SHELL)
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
-  INKSCAPE=/Applications/Inkscape.app/Contents/Resources/bin/inkscape
   SOFFICE=/Applications/LibreOffice.app/Contents/MacOS/soffice
 else
-  INKSCAPE=inkscape
   SOFFICE=soffice
 endif
 
@@ -46,7 +44,7 @@ code/fmt.tex: ## generate color table
 	pygmentize -f latex -S default > $@
 
 fig/%.pdf: fig/%.svg ## generate pdf from svg
-	$(INKSCAPE) --without-gui -f ${CURDIR}/$^ -D -A ${CURDIR}/$@
+	bin/inkscape-svg2pdf.sh ${CURDIR}/$^ ${CURDIR}/$@
 
 fig/%.pdf: fig/%.odg ## generate pdf from LibreOffice Draw
 	$(SOFFICE) --convert-to pdf $< --outdir $(@D)
@@ -54,6 +52,9 @@ fig/%.pdf: fig/%.odg ## generate pdf from LibreOffice Draw
 
 data/%.tex: data/%.gp ## generate plot
 	gnuplot $^
+
+data/%.pdf: data/%.py ## generate plot
+	python3 $^
 
 draft: $(DEPS) ## generate pdf with a draft info
 	echo -e '\\newcommand*{\\DRAFT}{}' >> rev.tex
