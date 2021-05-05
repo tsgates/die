@@ -50,7 +50,25 @@ def get_sys(tex):
         exit(1)
     return tok[0]
 
-kw = get_keywords(open(pn_main).read())
+def get_keywords_inclusive(entry):
+    # collect first-level include
+    targets = [entry]
+    for l in open(entry):
+        if "\\include" in l:
+            l = l[8:].strip()
+            l = l.replace("{", "")
+            l = l.replace("}", "")
+            targets.append(l)
+
+    rtn = {}
+    for f in targets:
+        for ext in ["", ".tex"]:
+            f = f + ext
+            if os.path.exists(f):
+                rtn.update(get_keywords(open(f).read()))
+    return rtn
+
+kw = get_keywords_inclusive(pn_main)
 
 abstract = []
 for l in open(pn_abst):
@@ -63,8 +81,8 @@ for l in open(pn_abst):
     if "{abstract}" in l:
         continue
 
-    for k, v in kw.items():
-        l = l.replace("\\%s" % k, v)
+    for k in sorted(kw.keys(), reverse=True):
+        l = l.replace("\\%s" % k, kw[k])
 
     l = l.replace("\\%", "%")
     l = l.replace("\\emph{", "")
