@@ -26,7 +26,7 @@ help: ## print help
 	  | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-10s\033[0m %s\n", $$1, $$2}'
 
 rev.tex: FORCE
-	@printf '\\gdef\\therev{%s}\n\\gdef\\thedate{%s}\n' \
+	@printf '\\\\gdef\\\\therev{%s}\n\\\\gdef\\\\thedate{%s}\n' \
 	   "$(shell git rev-parse --short HEAD)"            \
 	   "$(shell git log -1 --format='%ci' HEAD)" > $@
 
@@ -49,11 +49,11 @@ data/%.pdf: data/%.py ## generate plot
 	python3 $^
 
 draft: $(DEPS) ## generate pdf with a draft info
-	echo -e '\\newcommand*{\\DRAFT}{}' >> rev.tex
+	echo -e '\\\\newcommand*{\\\\DRAFT}{}' >> rev.tex
 	@TEXINPUTS="sty:" bin/latexrun $(BTEX) $(MAIN)
 
 watermark: $(DEPS) ## generate pdf with a watermark
-	echo -e '\\usepackage[firstpage]{draftwatermark}' >> rev.tex
+	echo -e '\\\\usepackage[firstpage]{draftwatermark}' >> rev.tex
 	@TEXINPUTS="sty:" bin/latexrun $(BTEX) $(MAIN)
 
 spell: ## run a spell check
