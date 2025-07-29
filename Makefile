@@ -7,7 +7,7 @@ PLOT := $(patsubst %.gp,%.tex,$(wildcard data/*.gp))
 DEPS := rev.tex code/fmt.tex abstract.txt $(CODE) $(FIGS) $(ODGS) $(PLOT)
 LTEX := --latex-args="-synctex=1 -shell-escape"
 BTEX := --bibtex-args="-min-crossrefs=99"
-SHELL:= $(shell echo $$SHELL)
+SHELL:= /bin/bash
 
 all: $(DEPS) ## generate a pdf
 	@TEXINPUTS="sty:" bin/latexrun $(LTEX) $(BTEX) $(MAIN)
@@ -22,7 +22,7 @@ diff: $(DEPS) ## generate diff-highlighed pdf
 	@bin/diff.sh $(DIFF)
 
 help: ## print help
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' Makefile \
 	  | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-10s\033[0m %s\n", $$1, $$2}'
 
 rev.tex: FORCE
