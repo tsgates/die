@@ -5,7 +5,7 @@
 \usepackage[dvipsnames]{xcolor}
 \hypersetup{citecolor=blue,linkcolor=blue}
 \usepackage{amsmath,amsopn,amssymb}
-\usepackage{subfigure}
+%\usepackage{subfigure}
 \usepackage{endnotes,microtype,xspace,graphicx,fancyvrb,multirow}
 \usepackage{booktabs}
 \usepackage{array,underscore,relsize}
@@ -13,7 +13,7 @@
 \usepackage{times}
 \usepackage{fancyhdr,lastpage}
 \usepackage{enumitem}
-\usepackage[labelfont=bf,font=small,skip=5pt]{caption}
+%\usepackage[labelfont=bf,font=small,skip=5pt]{caption}
 \pagestyle{fancy}
 \fancyhf{}
 \renewcommand{\headrulewidth}{0pt}
@@ -24,6 +24,10 @@
 \usepackage{siunitx}
 
 % pseudo code
+\makeatletter
+\@namedef{ver@lineno.sty}{9999/12/31}
+\@namedef{opt@lineno.sty}{}
+\makeatother
 \usepackage{minted}
 
 % balance bibliography

@@ -50,11 +50,11 @@ data/%.pdf: data/%.py ## generate plot
 
 draft: $(DEPS) ## generate pdf with a draft info
 	echo -e '\\newcommand*{\\DRAFT}{}' >> rev.tex
-	@TEXINPUTS="sty:" bin/latexrun $(BTEX) $(MAIN)
+	@TEXINPUTS="sty:" bin/latexrun $(LTEX) $(BTEX) $(MAIN)
 
 watermark: $(DEPS) ## generate pdf with a watermark
 	echo -e '\\usepackage[firstpage]{draftwatermark}' >> rev.tex
-	@TEXINPUTS="sty:" bin/latexrun $(BTEX) $(MAIN)
+	@TEXINPUTS="sty:" bin/latexrun $(LTEX) $(BTEX) $(MAIN)
 
 spell: ## run a spell check
 	@for i in *.tex fig/*.tex; do bin/aspell.sh tex $$i; done
