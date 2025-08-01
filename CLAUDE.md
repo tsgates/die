@@ -121,8 +121,8 @@ I prefer the style below:
 We discovered a 0-day vulnerability
 in SQLite3's FTS5 (Full-Text Search 5) module, 
 specifically within the trigram tokenizer implementation.
-The trigram tokenizer breaks text into overlapping three-character
-sequences for substring matching in full-text searches.
+The trigram tokenizer breaks text into overlapping three-character sequences
+for substring matching in full-text searches.
 ```
 
 ## Convention
