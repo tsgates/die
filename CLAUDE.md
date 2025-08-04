@@ -106,7 +106,10 @@ that won't be processed
 
 ## Breaking line rules
 
-Instead of writing below:
+Break the lines following the "semantic line breaks" rules (https://sembr.org),
+making it easier to read the raw text files.
+
+For example, instead of writing below:
 
 ```
 We discovered a 0-day vulnerability in SQLite3's FTS5 (Full-Text Search 5)
